@@ -25,6 +25,7 @@ const appLoaded = ref(false);
 const loadApp = async () => {
   loadingStore.showLoader("Loading the app. Please wait...");
   try {
+    appLoaded.value = false;
     // Removing existing iframe if any
     document.querySelector("iframe.xar-wallet")?.remove();
     await auth.loadAuth(appAddress.value);
@@ -50,6 +51,7 @@ const loadPreset = async (preset) => {
     address = import.meta.env.VITE_SOLANA_TESTNET_APP;
     presetName = "Solana App on Testnet";
   }
+  appLoaded.value = false;
   appAddress.value = address;
   loadingStore.showLoader(`Loading the ${presetName}. Please wait...`);
   try {
