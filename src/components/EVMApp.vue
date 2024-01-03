@@ -184,8 +184,10 @@ async function sendTransaction() {
 
 <template>
   <div>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+    <div style="display: flex; flex-wrap: wrap">
       <button
+        class="tab"
+        :class="{ selected: selectedTab === 'requestAccounts' }"
         @click.stop="
           selectedTab = 'requestAccounts';
           handleRequestAccounts();
@@ -194,6 +196,8 @@ async function sendTransaction() {
         Request Accounts
       </button>
       <button
+        class="tab"
+        :class="{ selected: selectedTab === 'showWallet' }"
         @click.stop="
           selectedTab = 'showWallet';
           handleShowWallet();
@@ -201,11 +205,39 @@ async function sendTransaction() {
       >
         Show Wallet
       </button>
-      <button @click.stop="selectedTab = 'addChain'">Add Chain</button>
-      <button @click.stop="selectedTab = 'switchChain'">Switch Chain</button>
-      <button @click.stop="selectedTab = 'addToken'">Add Token</button>
-      <button @click.stop="selectedTab = 'signMessage'">Sign Message</button>
-      <button @click.stop="selectedTab = 'sendTransaction'">
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'addChain' }"
+        @click.stop="selectedTab = 'addChain'"
+      >
+        Add Chain
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'switchChain' }"
+        @click.stop="selectedTab = 'switchChain'"
+      >
+        Switch Chain
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'addToken' }"
+        @click.stop="selectedTab = 'addToken'"
+      >
+        Add Token
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'signMessage' }"
+        @click.stop="selectedTab = 'signMessage'"
+      >
+        Sign Message
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'sendTransaction' }"
+        @click.stop="selectedTab = 'sendTransaction'"
+      >
         Send Transaction
       </button>
     </div>
@@ -240,24 +272,21 @@ async function sendTransaction() {
             <input id="chain-icon" v-model="addChainInput.iconUrl" />
           </div>
         </div>
-        <div style="display: flex; gap: 0.5rem; align-items: center">
-          <label style="font-weight: 600">Currency:</label>
-          <div style="display: flex; gap: 1rem">
-            <div class="form-group">
-              <label for="chain-symbol">Symbol</label>
-              <input
-                id="chain-symbol"
-                v-model="addChainInput.nativeCurrency.symbol"
-              />
-            </div>
-            <div class="form-group">
-              <label for="chain-decimals">Decimals</label>
-              <input
-                id="chain-decimals"
-                v-model="addChainInput.nativeCurrency.decimals"
-                type="number"
-              />
-            </div>
+        <div style="display: flex; gap: 1rem; align-items: center">
+          <div class="form-group">
+            <label for="chain-symbol">Currency Symbol</label>
+            <input
+              id="chain-symbol"
+              v-model="addChainInput.nativeCurrency.symbol"
+            />
+          </div>
+          <div class="form-group">
+            <label for="chain-decimals">Currency Decimals</label>
+            <input
+              id="chain-decimals"
+              v-model="addChainInput.nativeCurrency.decimals"
+              type="number"
+            />
           </div>
         </div>
         <div style="display: flex; gap: 1rem">
@@ -311,8 +340,10 @@ async function sendTransaction() {
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="signMessage"
       >
-        <label for="message">Enter message to sign</label>
-        <textarea id="message" v-model="messageToSign"></textarea>
+        <div class="form-group">
+          <label for="message">Enter message to sign</label>
+          <textarea id="message" v-model="messageToSign" rows="10"></textarea>
+        </div>
         <div style="display: flex; gap: 1rem">
           <button>Sign Message</button>
           <button type="reset">Reset</button>
@@ -336,7 +367,7 @@ async function sendTransaction() {
             >Data (Optional - Only used for Contract Deployment or Contract
             Interaction)</label
           >
-          <textarea id="data" v-model="sendTxInput.data"></textarea>
+          <textarea id="data" v-model="sendTxInput.data" rows="10"></textarea>
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Send Transaction</button>

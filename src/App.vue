@@ -144,6 +144,9 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 1024px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .loader {
