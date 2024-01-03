@@ -39,6 +39,7 @@ const loadApp = async () => {
 };
 
 const loadPreset = async (preset) => {
+  appLoaded.value = false;
   let address = "";
   let presetName = "";
   if (preset === "evm-mainnet") {
@@ -51,7 +52,6 @@ const loadPreset = async (preset) => {
     address = import.meta.env.VITE_SOLANA_TESTNET_APP;
     presetName = "Solana App on Testnet";
   }
-  appLoaded.value = false;
   appAddress.value = address;
   loadingStore.showLoader(`Loading the ${presetName}. Please wait...`);
   try {
