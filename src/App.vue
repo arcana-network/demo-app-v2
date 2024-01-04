@@ -107,7 +107,7 @@ const logout = async () => {
           <button @click.stop="loadPreset('evm-testnet')">
             Load EVM App on Testnet
           </button>
-          <button @click.stop="loadPreset('solana-testnet')">
+          <button disabled @click.stop="loadPreset('solana-testnet')">
             Load Solana App on Testnet
           </button>
         </div>
