@@ -67,18 +67,11 @@ textarea {
 }
 
 .tab {
-  border-right: 1px solid var(--vt-c-divider-dark-2);
-  border-bottom: 1px solid var(--vt-c-divider-dark-2);
+  border: 1px solid var(--vt-c-divider-dark-2);
   color: var(--color-text);
   background: var(--color-background);
   transition: all 0.3s ease-in;
-  border-top: 1px solid var(--vt-c-divider-dark-2);
-  border-left: none;
   border-radius: 0;
-}
-
-.tab:first-child {
-  border-left: 1px solid var(--vt-c-divider-dark-2);
 }
 
 .tab.selected {
