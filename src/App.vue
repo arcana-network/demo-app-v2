@@ -9,6 +9,7 @@ const appAddress = ref("");
 const isLoggedIn = computed(() => auth.isLoggedIn);
 const loadingStore = useLoadingStore();
 const auth = useAuthStore();
+const presetLoaded = ref("");
 const appNetwork = computed(() => {
   if (appAddress.value.includes("dev")) {
     return "Dev";
@@ -23,6 +24,7 @@ const appNetwork = computed(() => {
 const appLoaded = ref(false);
 
 const loadApp = async () => {
+  presetLoaded.value = "";
   loadingStore.showLoader("Loading the app. Please wait...");
   try {
     appLoaded.value = false;
@@ -40,6 +42,7 @@ const loadApp = async () => {
 
 const loadPreset = async (preset) => {
   appLoaded.value = false;
+  presetLoaded.value = "";
   let address = "";
   let presetName = "";
   if (preset === "evm-mainnet") {
@@ -52,12 +55,12 @@ const loadPreset = async (preset) => {
     address = import.meta.env.VITE_SOLANA_TESTNET_APP;
     presetName = "Solana App on Testnet";
   }
-  appAddress.value = address;
   loadingStore.showLoader(`Loading the ${presetName}. Please wait...`);
   try {
     document.querySelector("iframe.xar-wallet")?.remove();
     await auth.loadAuth(address);
     appLoaded.value = true;
+    presetLoaded.value = `Loaded ${presetName}`;
   } catch (e) {
     console.error(e);
     alert("Error loading app. Please check the console for more details.");
@@ -72,6 +75,9 @@ const login = async () => {
 
 const logout = async () => {
   await auth.logout();
+  appAddress.value = "";
+  appLoaded.value = false;
+  presetLoaded.value = "";
 };
 </script>
 
@@ -101,7 +107,7 @@ const logout = async () => {
           <button @click.stop="loadPreset('evm-testnet')">
             Load EVM App on Testnet
           </button>
-          <button disabled @click.stop="loadPreset('solana-testnet')">
+          <button @click.stop="loadPreset('solana-testnet')">
             Load Solana App on Testnet
           </button>
         </div>
@@ -125,7 +131,10 @@ const logout = async () => {
         </form>
       </div>
       <div class="hide mt-1" :class="{ show: appLoaded }">
-        App {{ appAddress }} loaded on {{ appNetwork }} network
+        <span v-if="presetLoaded">{{ presetLoaded }}</span>
+        <span v-else
+          >App {{ appAddress }} loaded on {{ appNetwork }} network</span
+        >
       </div>
       <div class="hide mt-1" :class="{ show: appLoaded }">
         <button @click.stop="login">Login With Arcana</button>
