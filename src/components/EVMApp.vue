@@ -94,10 +94,10 @@ async function addChain() {
     },
   };
   if (addChainInput.value.blockExplorerUrl) {
-    params.blockExplorerUrls = [addChainInput.value.blockExplorerUrl];
+    param.blockExplorerUrls = [addChainInput.value.blockExplorerUrl];
   }
   if (addChainInput.value.iconUrl) {
-    params.iconUrls = [addChainInput.value.iconUrl];
+    param.iconUrls = [addChainInput.value.iconUrl];
   }
   try {
     output.value = await auth.provider.request({
@@ -180,6 +180,65 @@ async function sendTransaction() {
     output.value = error;
   }
 }
+
+function loadChain(chain) {
+  switch (chain) {
+    case "gnosis":
+      addChainInput.value = {
+        chainId: "0x64",
+        chainName: "Gnosis",
+        nativeCurrency: {
+          symbol: "GNO",
+          decimals: 18,
+        },
+        rpcUrl: "https://gnosis.publicnode.com",
+        blockExplorerUrl: "https://gnosisscan.io",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_xdai.jpg",
+      };
+      break;
+    case "mantle":
+      addChainInput.value = {
+        chainId: "0x1388",
+        chainName: "Mantle",
+        nativeCurrency: {
+          symbol: "MNT",
+          decimals: 18,
+        },
+        rpcUrl: "https://rpc.mantle.xyz",
+        blockExplorerUrl: "https://explorer.mantle.xyz",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_mantle.jpg",
+      };
+      break;
+    case "celo":
+      addChainInput.value = {
+        chainId: "0xa4ec",
+        chainName: "Celo Mainnet",
+        nativeCurrency: {
+          symbol: "CELO",
+          decimals: 18,
+        },
+        rpcUrl: "https://1rpc.io/celo",
+        blockExplorerUrl: "https://celoscan.io",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_celo.jpg",
+      };
+      break;
+    case "cronos":
+      addChainInput.value = {
+        chainId: "0x19",
+        chainName: "Cronos Mainnet",
+        nativeCurrency: {
+          symbol: "CRON",
+          decimals: 18,
+        },
+        rpcUrl: "https://cronos-evm.publicnode.com",
+        blockExplorerUrl: "https://cronoscan.com",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_cronos.jpg",
+      };
+      break;
+    default:
+      break;
+  }
+}
 </script>
 
 <template>
@@ -243,8 +302,18 @@ async function sendTransaction() {
     </div>
     <div class="input mt-1" v-if="hasInput">
       <h4 style="font-weight: 600">Input</h4>
+      <div v-if="selectedTab === 'addChain'">
+        <h4>Load Input from presets</h4>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <button @click.stop="loadChain('celo')">Load Celo Mainnet</button>
+          <button @click.stop="loadChain('cronos')">Load Cronos Mainnet</button>
+          <button @click.stop="loadChain('gnosis')">Load Gnosis</button>
+          <button @click.stop="loadChain('mantle')">Load Mantle</button>
+        </div>
+      </div>
       <form
         v-if="selectedTab === 'addChain'"
+        class="mt-1"
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="addChain"
       >
