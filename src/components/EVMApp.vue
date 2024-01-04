@@ -311,6 +311,23 @@ function loadChain(chain) {
           <button @click.stop="loadChain('mantle')">Load Mantle</button>
         </div>
       </div>
+      <div v-if="selectedTab === 'switchChain'">
+        <h4>Load Input from presets</h4>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <button @click.stop="addChainInput.chainId = '0x1'">
+            Load Ethereum Mainnet
+          </button>
+          <button @click.stop="addChainInput.chainId = '0x89'">
+            Load Polygon Mainnet
+          </button>
+          <button @click.stop="addChainInput.chainId = '0x38'">
+            Load BNB Smart Chain
+          </button>
+          <button @click.stop="addChainInput.chainId = '0x13881'">
+            Load Polygon Mumbai
+          </button>
+        </div>
+      </div>
       <form
         v-if="selectedTab === 'addChain'"
         class="mt-1"
@@ -331,16 +348,6 @@ function loadChain(chain) {
             <input id="chain-rpc" v-model="addChainInput.rpcUrl" />
           </div>
         </div>
-        <div style="display: flex; gap: 1rem">
-          <div class="form-group">
-            <label for="chain-exp">Explorer Url</label>
-            <input id="chain-exp" v-model="addChainInput.blockExplorerUrl" />
-          </div>
-          <div class="form-group">
-            <label for="chain-icon">Chain Icon</label>
-            <input id="chain-icon" v-model="addChainInput.iconUrl" />
-          </div>
-        </div>
         <div style="display: flex; gap: 1rem; align-items: center">
           <div class="form-group">
             <label for="chain-symbol">Currency Symbol</label>
@@ -359,12 +366,23 @@ function loadChain(chain) {
           </div>
         </div>
         <div style="display: flex; gap: 1rem">
+          <div class="form-group">
+            <label for="chain-exp">Explorer Url (Optional)</label>
+            <input id="chain-exp" v-model="addChainInput.blockExplorerUrl" />
+          </div>
+          <div class="form-group">
+            <label for="chain-icon">Chain Icon (Optional)</label>
+            <input id="chain-icon" v-model="addChainInput.iconUrl" />
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem">
           <button>Add Chain</button>
           <button type="reset">Reset</button>
         </div>
       </form>
       <form
         v-if="selectedTab === 'switchChain'"
+        class="mt-1"
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="switchChain"
       >
@@ -377,27 +395,29 @@ function loadChain(chain) {
           <button type="reset">Reset</button>
         </div>
       </form>
+      <div v-if="selectedTab === 'addToken'">Add ERC20 details</div>
       <form
         v-if="selectedTab === 'addToken'"
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="addToken"
       >
-        <div>Add ERC20 details</div>
         <div class="form-group">
           <label for="contract">Contract Address</label>
           <input id="contract" v-model="addTokenInput.contract" />
         </div>
-        <div class="form-group">
-          <label for="symbol">Symbol</label>
-          <input id="symbol" v-model="addTokenInput.symbol" />
-        </div>
-        <div class="form-group">
-          <label for="decimals">Decimals</label>
-          <input id="decimals" v-model="addTokenInput.decimals" />
-        </div>
-        <div class="form-group">
-          <label for="image">Image</label>
-          <input id="image" v-model="addTokenInput.image" />
+        <div style="display: flex; align-items: center; gap: 1rem">
+          <div class="form-group">
+            <label for="symbol">Symbol</label>
+            <input id="symbol" v-model="addTokenInput.symbol" />
+          </div>
+          <div class="form-group">
+            <label for="decimals">Decimals</label>
+            <input id="decimals" v-model="addTokenInput.decimals" />
+          </div>
+          <div class="form-group">
+            <label for="image">Image (Optional)</label>
+            <input id="image" v-model="addTokenInput.image" />
+          </div>
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Add Token</button>
