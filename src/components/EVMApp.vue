@@ -527,11 +527,11 @@ function loadChain(chain) {
     </div>
     <div class="output mt-1" v-if="input">
       <div>
-        <h4 style="font-weight: 600">Input Sent</h4>
+        <h4 style="font-weight: 600">Request Sent</h4>
         <pre>{{ input }}</pre>
       </div>
       <div>
-        <h4 style="font-weight: 600">Output Received</h4>
+        <h4 style="font-weight: 600">Response Received</h4>
         <pre v-if="output">{{ output }}</pre>
       </div>
     </div>
