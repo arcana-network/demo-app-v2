@@ -102,6 +102,45 @@ async function handleShowWallet() {
   await auth.authProvider.showWallet();
 }
 
+async function loadSiweMessage() {
+  messageToSign.value = `localhost wants you to sign in with your Ethereum account:
+${from.value}
+
+This is a test statement.
+
+URI: https://localhost/login
+Version: 1
+Chain ID: 1
+Nonce: ${Math.random().toString(16).substring(2, 10)}
+Issued At: ${new Date().toISOString()}`;
+}
+
+async function loadRandomMessage() {
+  messageToSign.value = `${Math.random()
+    .toString(36)
+    .substring(2)} ${Math.random().toString(36).substring(2)} ${Math.random()
+    .toString(36)
+    .substring(2)}`;
+}
+
+async function loadSendUSDC() {
+  // Send 1 USDC to the current user
+  sendTxInput.value = {
+    to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    value: "0x0",
+    data: "0xa9059cbb000000000000000000000000" + from.value.substring(2),
+  };
+}
+
+async function loadSendETH() {
+  // Send 0.0001 ETH to user
+  sendTxInput.value = {
+    to: from.value,
+    value: "0xe8d4a51000",
+    data: "",
+  };
+}
+
 async function addChain() {
   const param = {
     chainId: addChainInput.value.chainId,
@@ -387,6 +426,20 @@ function loadChain(chain) {
           <button @click.stop="addChainInput.chainId = '0x13881'">
             Load Polygon Mumbai
           </button>
+        </div>
+      </div>
+      <div v-if="selectedTab === 'signMessage'">
+        <h4>Load Input from presets</h4>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <button @click.stop="loadSiweMessage">Load SIWE Message</button>
+          <button @click.stop="loadRandomMessage">Load Random Message</button>
+        </div>
+      </div>
+      <div v-if="selectedTab === 'sendTransaction'">
+        <h4>Load Input from presets</h4>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <button @click.stop="loadSendETH">Load Native Token Transfer</button>
+          <button @click.stop="loadSendUSDC">Load USDC Transfer</button>
         </div>
       </div>
       <form
