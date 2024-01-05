@@ -212,6 +212,10 @@ async function switchChain() {
   }
 }
 
+watch(input, () => {
+  output.value = "";
+});
+
 async function addToken() {
   input.value = {
     method: "wallet_watchAsset",
@@ -544,7 +548,9 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Add Chain</button>
-          <button type="reset">Reset</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
         </div>
       </form>
       <form
@@ -559,7 +565,9 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Switch Chain</button>
-          <button type="reset">Reset</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
         </div>
       </form>
       <div class="mt-1" v-if="selectedTab === 'addToken'">
@@ -590,7 +598,9 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Add Token</button>
-          <button type="reset">Reset</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
         </div>
       </form>
       <form
@@ -605,7 +615,9 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Sign Message</button>
-          <button type="reset">Reset</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
         </div>
       </form>
       <form
@@ -631,7 +643,9 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Send Transaction</button>
-          <button type="reset">Reset</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
         </div>
       </form>
     </div>
