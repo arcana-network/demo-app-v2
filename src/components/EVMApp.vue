@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed, watch, onBeforeMount } from "vue";
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useLoadingStore } from "@/stores/loading";
+import { chainNames, chainTokens } from "@/chains";
 
 const selectedTab = ref("");
 const auth = useAuthStore();
@@ -32,6 +33,10 @@ const sendTxInput = ref({
   value: "",
   data: "",
 });
+const walletChain = ref("");
+const displayTokens = computed(() => {
+  return chainTokens[Number(walletChain.value)];
+});
 
 onBeforeMount(async () => {
   const addrInterval = setInterval(() => {
@@ -40,14 +45,25 @@ onBeforeMount(async () => {
       .request({
         method: "eth_requestAccounts",
       })
-      .then((accounts) => {
+      .then(async (accounts) => {
         from.value = accounts[0];
+        const chainId = await auth.provider.request({
+          method: "eth_chainId",
+        });
+        walletChain.value = chainId;
+        auth.provider.on("chainChanged", (chainId) => {
+          walletChain.value = chainId;
+        });
         if (from.value) {
           clearInterval(addrInterval);
           loader.hideLoader();
         }
       });
   }, 1000);
+});
+
+onBeforeUnmount(() => {
+  auth.provider.removeAllListeners();
 });
 
 watch(selectedTab, () => {
@@ -329,12 +345,28 @@ function loadChain(chain) {
       break;
   }
 }
+
+function populateToken(token) {
+  addTokenInput.value = {
+    contract: token.contractAddress,
+    symbol: token.symbol,
+    decimals: token.decimals,
+    image: token.image,
+  };
+}
 </script>
 
 <template>
   <div>
     <div class="hide" :class="{ show: !!from }">
       <span>Loaded the account: {{ from }}</span>
+      <br />
+      <span
+        >Currently selected chain: {{ walletChain }}
+        <span v-if="chainNames[Number(walletChain)]"
+          >({{ chainNames[Number(walletChain)] }})</span
+        ></span
+      >
     </div>
     <div class="mt-1" style="display: flex; flex-wrap: wrap">
       <button
@@ -423,9 +455,30 @@ function loadChain(chain) {
           <button @click.stop="addChainInput.chainId = '0x38'">
             Load BNB Smart Chain
           </button>
-          <button @click.stop="addChainInput.chainId = '0x13881'">
-            Load Polygon Mumbai
+          <button @click.stop="addChainInput.chainId = '0xa4b1'">
+            Load Arbitrum One
           </button>
+        </div>
+      </div>
+      <div v-if="selectedTab === 'addToken'">
+        <h4>Load Input from presets:</h4>
+        <div
+          v-if="displayTokens?.length"
+          style="display: flex; gap: 1rem; flex-wrap: wrap"
+        >
+          <button
+            v-for="displayToken in displayTokens"
+            @click.stop="populateToken(displayToken)"
+          >
+            {{ displayToken.name }}
+          </button>
+        </div>
+        <div v-else>
+          <span
+            >No presets available for this chain. Please switch the chain to 0x1
+            (Ethereum Mainnet), 0x89 (Polygon Mainnet), 0x38 (BNB Smart Chain
+            Mainnet) or 0xa4b1 (Arbitrum One) to get presets</span
+          >
         </div>
       </div>
       <div v-if="selectedTab === 'signMessage'">
@@ -509,7 +562,9 @@ function loadChain(chain) {
           <button type="reset">Reset</button>
         </div>
       </form>
-      <div v-if="selectedTab === 'addToken'">Add ERC20 details</div>
+      <div class="mt-1" v-if="selectedTab === 'addToken'">
+        Add ERC20 details
+      </div>
       <form
         v-if="selectedTab === 'addToken'"
         style="display: flex; flex-direction: column; gap: 1rem"
@@ -540,6 +595,7 @@ function loadChain(chain) {
       </form>
       <form
         v-if="selectedTab === 'signMessage'"
+        class="mt-1"
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="signMessage"
       >
@@ -554,6 +610,7 @@ function loadChain(chain) {
       </form>
       <form
         v-if="selectedTab === 'sendTransaction'"
+        class="mt-1"
         style="display: flex; flex-direction: column; gap: 1rem"
         @submit.prevent="sendTransaction"
       >
