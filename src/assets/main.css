@@ -80,6 +80,36 @@ textarea {
   box-shadow: none;
 }
 
+.output {
+  display: flex;
+  gap: 4px;
+}
+
+.output > * {
+  flex-grow: 1;
+  border: 1px solid var(--vt-c-divider-dark-2);
+  padding: 0.25rem;
+  width: 100%;
+}
+
+.output h4 {
+  padding-left: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+pre {
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  font-size: 12px;
+  background-color: var(--color-text);
+  color: var(--color-background);
+  padding: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
 @media (hover: hover) {
   button:hover:not(:disabled) {
     box-shadow: 2px 4px 2px 1px var(--vt-c-divider-light-1);

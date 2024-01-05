@@ -1,10 +1,13 @@
 <script setup>
 import { ref, computed, watch, onBeforeMount } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { useLoadingStore } from "@/stores/loading";
 
 const selectedTab = ref("");
 const auth = useAuthStore();
+const loader = useLoadingStore();
 const output = ref("");
+const input = ref("");
 const addChainInput = ref({
   chainId: "",
   chainName: "",
@@ -31,14 +34,25 @@ const sendTxInput = ref({
 });
 
 onBeforeMount(async () => {
-  const accounts = await auth.provider.request({
-    method: "eth_requestAccounts",
-  });
-  from.value = accounts[0];
+  const addrInterval = setInterval(() => {
+    loader.showLoader("Loading your wallet. Please wait...");
+    auth.provider
+      .request({
+        method: "eth_requestAccounts",
+      })
+      .then((accounts) => {
+        from.value = accounts[0];
+        if (from.value) {
+          clearInterval(addrInterval);
+          loader.hideLoader();
+        }
+      });
+  }, 1000);
 });
 
 watch(selectedTab, () => {
   output.value = "";
+  input.value = "";
   addChainInput.value = {
     chainId: "",
     chainName: "",
@@ -76,7 +90,12 @@ const hasInput = computed(() => {
 });
 
 async function handleRequestAccounts() {
-  output.value = await auth.provider.request({ method: "eth_requestAccounts" });
+  setTimeout(async () => {
+    input.value = { method: "eth_requestAccounts" };
+    output.value = await auth.provider.request({
+      method: "eth_requestAccounts",
+    });
+  }, 10);
 }
 
 async function handleShowWallet() {
@@ -99,6 +118,10 @@ async function addChain() {
   if (addChainInput.value.iconUrl) {
     param.iconUrls = [addChainInput.value.iconUrl];
   }
+  input.value = {
+    method: "wallet_addEthereumChain",
+    params: [param],
+  };
   try {
     output.value = await auth.provider.request({
       method: "wallet_addEthereumChain",
@@ -111,6 +134,14 @@ async function addChain() {
 }
 
 async function switchChain() {
+  input.value = {
+    method: "wallet_switchEthereumChain",
+    params: [
+      {
+        chainId: addChainInput.value.chainId,
+      },
+    ],
+  };
   try {
     output.value = await auth.provider.request({
       method: "wallet_switchEthereumChain",
@@ -127,6 +158,18 @@ async function switchChain() {
 }
 
 async function addToken() {
+  input.value = {
+    method: "wallet_watchAsset",
+    params: {
+      type: "ERC20",
+      options: {
+        address: addTokenInput.value.contract,
+        symbol: addTokenInput.value.symbol,
+        decimals: addTokenInput.value.decimals,
+        image: addTokenInput.value.image,
+      },
+    },
+  };
   try {
     output.value = await auth.provider.request({
       method: "wallet_watchAsset",
@@ -147,6 +190,10 @@ async function addToken() {
 }
 
 async function signMessage() {
+  input.value = {
+    method: "personal_sign",
+    params: [messageToSign.value, from.value],
+  };
   try {
     output.value = await auth.provider.request({
       method: "personal_sign",
@@ -159,18 +206,22 @@ async function signMessage() {
 }
 
 async function sendTransaction() {
-  try {
-    const param = {
-      from: from.value,
-      to: sendTxInput.value.to,
-    };
+  const param = {
+    from: from.value,
+    to: sendTxInput.value.to,
+  };
 
-    if (sendTxInput.value.value) {
-      param.value = sendTxInput.value.value;
-    }
-    if (sendTxInput.value.data) {
-      param.data = sendTxInput.value.data;
-    }
+  if (sendTxInput.value.value) {
+    param.value = sendTxInput.value.value;
+  }
+  if (sendTxInput.value.data) {
+    param.data = sendTxInput.value.data;
+  }
+  input.value = {
+    method: "eth_sendTransaction",
+    params: [param],
+  };
+  try {
     output.value = await auth.provider.request({
       method: "eth_sendTransaction",
       params: [param],
@@ -243,7 +294,10 @@ function loadChain(chain) {
 
 <template>
   <div>
-    <div style="display: flex; flex-wrap: wrap">
+    <div class="hide" :class="{ show: !!from }">
+      <span>Loaded the account: {{ from }}</span>
+    </div>
+    <div class="mt-1" style="display: flex; flex-wrap: wrap">
       <button
         class="tab"
         :class="{ selected: selectedTab === 'requestAccounts' }"
@@ -251,6 +305,7 @@ function loadChain(chain) {
           selectedTab = 'requestAccounts';
           handleRequestAccounts();
         "
+        :disabled="!from"
       >
         Request Accounts
       </button>
@@ -261,6 +316,7 @@ function loadChain(chain) {
           selectedTab = 'showWallet';
           handleShowWallet();
         "
+        :disabled="!from"
       >
         Show Wallet
       </button>
@@ -268,6 +324,7 @@ function loadChain(chain) {
         class="tab"
         :class="{ selected: selectedTab === 'addChain' }"
         @click.stop="selectedTab = 'addChain'"
+        :disabled="!from"
       >
         Add Chain
       </button>
@@ -275,6 +332,7 @@ function loadChain(chain) {
         class="tab"
         :class="{ selected: selectedTab === 'switchChain' }"
         @click.stop="selectedTab = 'switchChain'"
+        :disabled="!from"
       >
         Switch Chain
       </button>
@@ -282,6 +340,7 @@ function loadChain(chain) {
         class="tab"
         :class="{ selected: selectedTab === 'addToken' }"
         @click.stop="selectedTab = 'addToken'"
+        :disabled="!from"
       >
         Add Token
       </button>
@@ -289,6 +348,7 @@ function loadChain(chain) {
         class="tab"
         :class="{ selected: selectedTab === 'signMessage' }"
         @click.stop="selectedTab = 'signMessage'"
+        :disabled="!from"
       >
         Sign Message
       </button>
@@ -296,6 +356,7 @@ function loadChain(chain) {
         class="tab"
         :class="{ selected: selectedTab === 'sendTransaction' }"
         @click.stop="selectedTab = 'sendTransaction'"
+        :disabled="!from"
       >
         Send Transaction
       </button>
@@ -464,12 +525,15 @@ function loadChain(chain) {
         </div>
       </form>
     </div>
-    <div class="output mt-1" v-if="output">
-      <h4 style="font-weight: 600">Output</h4>
-      <pre
-        style="overflow-x: auto; white-space: pre-wrap; word-wrap: break-word"
-        >{{ output }}</pre
-      >
+    <div class="output mt-1" v-if="input">
+      <div>
+        <h4 style="font-weight: 600">Input Sent</h4>
+        <pre>{{ input }}</pre>
+      </div>
+      <div>
+        <h4 style="font-weight: 600">Output Received</h4>
+        <pre v-if="output">{{ output }}</pre>
+      </div>
     </div>
   </div>
 </template>
