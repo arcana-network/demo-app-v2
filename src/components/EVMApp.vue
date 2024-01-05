@@ -2,7 +2,7 @@
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useLoadingStore } from "@/stores/loading";
-import { chainNames, chainTokens } from "@/chains";
+import { chainNames, chainTokens, chainUSDTs } from "@/chains";
 
 const selectedTab = ref("");
 const auth = useAuthStore();
@@ -36,6 +36,9 @@ const sendTxInput = ref({
 const walletChain = ref("");
 const displayTokens = computed(() => {
   return chainTokens[Number(walletChain.value)];
+});
+const chainUSDT = computed(() => {
+  return chainUSDTs[Number(walletChain.value)];
 });
 
 onBeforeMount(async () => {
@@ -139,12 +142,14 @@ async function loadRandomMessage() {
     .substring(2)}`;
 }
 
-async function loadSendUSDC() {
-  // Send 1 USDC to the current user
+async function loadSendUSDT() {
+  // Send 1 USDT to the current user
   sendTxInput.value = {
-    to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-    value: "0x0",
-    data: "0xa9059cbb000000000000000000000000" + from.value.substring(2),
+    to: chainUSDT.value,
+    data:
+      "0xa9059cbb000000000000000000000000" +
+      from.value.substring(2) +
+      "00000000000000000000000000000000000000000000000000000000000f4240",
   };
 }
 
@@ -462,6 +467,9 @@ function populateToken(token) {
           <button @click.stop="addChainInput.chainId = '0xa4b1'">
             Load Arbitrum One
           </button>
+          <button @click.stop="addChainInput.chainId = '0xa'">
+            Load OP Mainnet
+          </button>
         </div>
       </div>
       <div v-if="selectedTab === 'addToken'">
@@ -495,8 +503,18 @@ function populateToken(token) {
       <div v-if="selectedTab === 'sendTransaction'">
         <h4>Load Input from presets</h4>
         <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-          <button @click.stop="loadSendETH">Load Native Token Transfer</button>
-          <button @click.stop="loadSendUSDC">Load USDC Transfer</button>
+          <button @click.stop="loadSendETH">
+            Load 0.000001 Native Token Transfer
+          </button>
+          <button v-if="chainUSDT" @click.stop="loadSendUSDT">
+            Load 1 USDT Transfer
+          </button>
+          <span v-else>
+            No USDT contract address available for this chain. Please switch the
+            chain to 0x1 (Ethereum Mainnet), 0x89 (Polygon Mainnet), 0x38 (BNB
+            Smart Chain Mainnet), 0xa4b1 (Arbitrum One) or 0xa (OP Mainnet) to
+            get the USDT preset
+          </span>
         </div>
       </div>
       <form

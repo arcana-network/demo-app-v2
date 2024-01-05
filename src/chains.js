@@ -147,4 +147,12 @@ const chainTokens = {
   ],
 };
 
-export { chainNames, chainTokens };
+const chainUSDTs = {
+  1: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  42161: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+  56: "0xd10EE63cC92ac9194CFf56Ee9dfAD2A0a93aa2Ee",
+  137: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+  10: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+};
+
+export { chainNames, chainTokens, chainUSDTs };
