@@ -95,49 +95,51 @@ const logout = async () => {
         <EVMApp v-else />
       </div>
     </section>
-    <section v-else name="pre-login">
+    <section v-else name="pre-login" style="align-items: center">
       <div>
-        <h3 style="font-weight: 600; margin-bottom: 0.5rem">
-          Load apps from the presets
-        </h3>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-          <button @click.stop="loadPreset('evm-mainnet')">
-            Load EVM App on Mainnet
-          </button>
-          <button @click.stop="loadPreset('evm-testnet')">
-            Load EVM App on Testnet
-          </button>
-          <button disabled @click.stop="loadPreset('solana-testnet')">
-            Load Solana App on Testnet
-          </button>
+        <div>
+          <h3 style="font-weight: 600; margin-bottom: 0.5rem">
+            Load apps from the presets
+          </h3>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+            <button @click.stop="loadPreset('evm-mainnet')">
+              Load EVM App on Mainnet
+            </button>
+            <button @click.stop="loadPreset('evm-testnet')">
+              Load EVM App on Testnet
+            </button>
+            <button disabled @click.stop="loadPreset('solana-testnet')">
+              Load Solana App on Testnet
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="mt-1">
-        <h3 style="font-weight: 600; margin-bottom: 0.5rem">
-          Or load your own app
-        </h3>
-        <form
-          @submit.prevent="loadApp"
-          style="display: flex; gap: 1rem; align-items: center"
-        >
-          <label for="app-address">App Address:</label>
-          <input
-            type="text"
-            id="app-address"
-            style="width: 360px"
-            v-model="appAddress"
-          />
-          <button type="submit">Load App</button>
-        </form>
-      </div>
-      <div class="hide mt-1" :class="{ show: appLoaded }">
-        <span v-if="presetLoaded">{{ presetLoaded }}</span>
-        <span v-else
-          >App {{ appAddress }} loaded on {{ appNetwork }} network</span
-        >
-      </div>
-      <div class="hide mt-1" :class="{ show: appLoaded }">
-        <button @click.stop="login">Login With Arcana</button>
+        <div class="mt-1">
+          <h3 style="font-weight: 600; margin-bottom: 0.5rem">
+            Or load your own app
+          </h3>
+          <form
+            @submit.prevent="loadApp"
+            style="display: flex; gap: 1rem; align-items: center"
+          >
+            <label for="app-address">App Address:</label>
+            <input
+              type="text"
+              id="app-address"
+              style="width: 360px"
+              v-model="appAddress"
+            />
+            <button type="submit">Load App</button>
+          </form>
+        </div>
+        <div class="hide mt-1" :class="{ show: appLoaded }">
+          <span v-if="presetLoaded">{{ presetLoaded }}</span>
+          <span v-else
+            >App {{ appAddress }} loaded on {{ appNetwork }} network</span
+          >
+        </div>
+        <div class="hide mt-1" :class="{ show: appLoaded }">
+          <button @click.stop="login">Login With Arcana</button>
+        </div>
       </div>
     </section>
   </main>
