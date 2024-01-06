@@ -27,6 +27,12 @@ const addTokenInput = ref({
   image: "",
 });
 const messageToSign = ref("");
+const dataToSign = ref({
+  types: "",
+  domain: "",
+  primaryType: "",
+  message: "",
+});
 const from = ref("");
 const sendTxInput = ref({
   to: "",
@@ -95,6 +101,12 @@ watch(selectedTab, () => {
     value: "",
     data: "",
   };
+  dataToSign.value = {
+    types: "",
+    domain: "",
+    primaryType: "",
+    message: "",
+  };
 });
 
 const hasInput = computed(() => {
@@ -103,7 +115,7 @@ const hasInput = computed(() => {
     selectedTab.value === "switchChain" ||
     selectedTab.value === "addToken" ||
     selectedTab.value === "signMessage" ||
-    selectedTab.value === "signTypedMessage" ||
+    selectedTab.value === "signTypedData" ||
     selectedTab.value === "sendTransaction"
   );
 });
@@ -262,6 +274,105 @@ async function signMessage() {
     output.value = await auth.provider.request({
       method: "personal_sign",
       params: [messageToSign.value, from.value],
+    });
+  } catch (error) {
+    console.error(error);
+    output.value = error;
+  }
+}
+
+function loadTypedData() {
+  dataToSign.value = {
+    types: `{
+  "EIP712Domain": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "version",
+      "type": "string"
+    },
+    {
+      "name": "chainId",
+      "type": "uint256"
+    },
+    {
+      "name": "verifyingContract",
+      "type": "address"
+    }
+  ],
+  "Person": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "wallet",
+      "type": "address"
+    }
+  ],
+  "Mail": [
+    {
+      "name": "from",
+      "type": "Person"
+    },
+    {
+      "name": "to",
+      "type": "Person"
+    },
+    {
+      "name": "contents",
+      "type": "string"
+    }
+  ]
+}`,
+    primaryType: "Mail",
+    domain: `{
+  "name": "Ether Mail",
+  "version": "1",
+  "chainId": 1,
+  "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
+}`,
+    message: `{
+  "from": {
+    "name": "Cow",
+    "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
+  },
+  "to": {
+    "name": "Bob",
+    "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
+  },
+  "contents": "Hello, Bob!"
+}`,
+  };
+}
+
+async function signTypedData() {
+  input.value = {
+    method: "eth_signTypedData_v4",
+    params: [
+      from.value,
+      {
+        types: JSON.parse(dataToSign.value.types),
+        domain: JSON.parse(dataToSign.value.domain),
+        primaryType: dataToSign.value.primaryType,
+        message: JSON.parse(dataToSign.value.message),
+      },
+    ],
+  };
+  try {
+    output.value = await auth.provider.request({
+      method: "eth_signTypedData_v4",
+      params: [
+        from.value,
+        JSON.stringify({
+          types: JSON.parse(dataToSign.value.types),
+          domain: JSON.parse(dataToSign.value.domain),
+          primaryType: dataToSign.value.primaryType,
+          message: JSON.parse(dataToSign.value.message),
+        }),
+      ],
     });
   } catch (error) {
     console.error(error);
@@ -440,6 +551,14 @@ function populateToken(token) {
       >
         Send Transaction
       </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'signTypedData' }"
+        @click.stop="selectedTab = 'signTypedData'"
+        :disabled="!from"
+      >
+        Sign Typed Data
+      </button>
     </div>
     <div class="input mt-1" v-if="hasInput">
       <h4 style="font-weight: 600">Input</h4>
@@ -498,6 +617,21 @@ function populateToken(token) {
         <div style="display: flex; gap: 1rem; flex-wrap: wrap">
           <button @click.stop="loadSiweMessage">Load SIWE Message</button>
           <button @click.stop="loadRandomMessage">Load Random Message</button>
+        </div>
+      </div>
+      <div v-if="selectedTab === 'signTypedData'">
+        <h4>Load Input from presets</h4>
+        <div
+          v-if="Number(walletChain) === 1"
+          style="display: flex; gap: 1rem; flex-wrap: wrap"
+        >
+          <button @click.stop="loadTypedData">Load Sample Typed Data</button>
+        </div>
+        <div v-else>
+          <span
+            >No presets available for this chain. Please switch the chain to 0x1
+            (Ethereum Mainnet) to get presets</span
+          >
         </div>
       </div>
       <div v-if="selectedTab === 'sendTransaction'">
@@ -633,6 +767,43 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Sign Message</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
+        </div>
+      </form>
+      <form
+        v-if="selectedTab === 'signTypedData'"
+        class="mt-1"
+        style="display: flex; flex-direction: column; gap: 1rem"
+        @submit.prevent="signTypedData"
+      >
+        <div class="form-group">
+          <label for="signing-acc">Signing Account</label>
+          <input id="signing-acc" disabled :value="from" />
+        </div>
+        <div class="form-group">
+          <label for="types">Types (Must be an object)</label>
+          <textarea id="types" v-model="dataToSign.types" rows="6"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="domain">Domain (Must be an object)</label>
+          <textarea id="domain" v-model="dataToSign.domain" rows="6"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="primary-type">Primary Type (String)</label>
+          <input id="primary-type" :value="dataToSign.primaryType" />
+        </div>
+        <div class="form-group">
+          <label for="domain">Message (Must be an object)</label>
+          <textarea
+            id="domain"
+            v-model="dataToSign.message"
+            rows="6"
+          ></textarea>
+        </div>
+        <div style="display: flex; gap: 1rem">
+          <button>Sign Typed Data</button>
           <button type="reset" @click.stop="(input = ''), (output = '')">
             Reset
           </button>
