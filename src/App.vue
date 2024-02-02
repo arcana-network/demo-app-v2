@@ -51,6 +51,9 @@ const loadPreset = async (preset) => {
   } else if (preset === "evm-testnet") {
     address = import.meta.env.VITE_EVM_TESTNET_APP;
     presetName = "EVM App on Testnet";
+  } else if (preset === "solana-mainnet") {
+    address = import.meta.env.VITE_SOLANA_TESTNET_APP;
+    presetName = "Solana App on Mainnet";
   } else if (preset === "solana-testnet") {
     address = import.meta.env.VITE_SOLANA_TESTNET_APP;
     presetName = "Solana App on Testnet";
@@ -108,7 +111,18 @@ const logout = async () => {
             <button @click.stop="loadPreset('evm-testnet')">
               Load EVM App on Testnet
             </button>
-            <button disabled @click.stop="loadPreset('solana-testnet')">
+            <button
+              disabled
+              title="Coming Soon"
+              @click.stop="loadPreset('solana-mainnet')"
+            >
+              Load Solana App on Mainnet
+            </button>
+            <button
+              disabled
+              title="Coming Soon"
+              @click.stop="loadPreset('solana-testnet')"
+            >
               Load Solana App on Testnet
             </button>
           </div>

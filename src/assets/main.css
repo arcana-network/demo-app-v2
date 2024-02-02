@@ -28,7 +28,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input {
+input, select, option {
   color: currentColor;
   border: 1px solid var(--color-text);
   background: transparent;

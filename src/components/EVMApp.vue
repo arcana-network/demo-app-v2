@@ -43,9 +43,11 @@ const walletChain = ref("");
 const displayTokens = computed(() => {
   return chainTokens[Number(walletChain.value)];
 });
+const currentAccountType = ref("");
 const chainUSDT = computed(() => {
   return chainUSDTs[Number(walletChain.value)];
 });
+const accountType = ref("");
 
 onBeforeMount(async () => {
   const addrInterval = setInterval(() => {
@@ -67,6 +69,13 @@ onBeforeMount(async () => {
           clearInterval(addrInterval);
           loader.hideLoader();
         }
+      });
+    auth.provider
+      .request({
+        method: "_arcana_getAccountType",
+      })
+      .then((accountType) => {
+        currentAccountType = accountType;
       });
   }, 1000);
 });
@@ -116,7 +125,8 @@ const hasInput = computed(() => {
     selectedTab.value === "addToken" ||
     selectedTab.value === "signMessage" ||
     selectedTab.value === "signTypedData" ||
-    selectedTab.value === "sendTransaction"
+    selectedTab.value === "sendTransaction" ||
+    selectedTab.value === "switchAccountType"
   );
 });
 
@@ -127,6 +137,35 @@ async function handleRequestAccounts() {
       method: "eth_requestAccounts",
     });
   }, 10);
+}
+
+async function handleGetAccountType() {
+  setTimeout(async () => {
+    input.value = { method: "_arcana_getAccountType" };
+    output.value = await auth.provider.request({
+      method: "_arcana_getAccountType",
+    });
+  }, 10);
+}
+
+async function handleSwitchAccountType() {
+  input.value = {
+    method: "_arcana_switchAccountType",
+    params: {
+      type: accountType.value,
+    },
+  };
+  try {
+    output.value = await auth.provider.request({
+      method: "_arcana_switchAccountType",
+      params: {
+        type: accountType.value,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    output.value = error;
+  }
 }
 
 async function handleShowWallet() {
@@ -487,6 +526,21 @@ function populateToken(token) {
           >({{ chainNames[Number(walletChain)] }})</span
         ></span
       >
+      <br />
+      <span
+        >Account Type:
+        <span v-if="currentAccountType === 'scw'"
+          >SCW (Smart Contract Wallet). Using this wallet you can perform
+          gasless transactions.<br />
+          <span
+            ><strong>Note:</strong> If you are using a sample app from the
+            presets then you will be charged gas fees from your SCW since the
+            gas tank for preset apps is empty and is not sponsored by the
+            developers.</span
+          ></span
+        >
+        <span v-else>EOA (Externally Owned Address).</span></span
+      >
     </div>
     <div class="mt-1" style="display: flex; flex-wrap: wrap">
       <button
@@ -558,6 +612,25 @@ function populateToken(token) {
         :disabled="!from"
       >
         Sign Typed Data
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'getAccountType' }"
+        @click.stop="
+          selectedTab = 'getAccountType';
+          handleGetAccountType();
+        "
+        :disabled="!from"
+      >
+        Get Account Type
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'switchAccountType' }"
+        @click.stop="selectedTab = 'switchAccountType'"
+        :disabled="!from"
+      >
+        Switch Account Type
       </button>
     </div>
     <div class="input mt-1" v-if="hasInput">
@@ -832,6 +905,30 @@ function populateToken(token) {
         </div>
         <div style="display: flex; gap: 1rem">
           <button>Send Transaction</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
+        </div>
+      </form>
+      <form
+        v-if="selectedTab === 'switchAccountType'"
+        class="mt-1"
+        style="display: flex; flex-direction: column; gap: 1rem"
+        @submit.prevent="handleSwitchAccountType"
+      >
+        <div class="form-group">
+          <label for="account-type">Account Type: </label>
+          <select
+            id="account-type"
+            placeholder="Select Account Type"
+            v-model="accountType"
+          >
+            <option value="scw">SCW (Smart Contract Wallet)</option>
+            <option value="eoa">EOA (Externally Owned Address)</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 1rem">
+          <button>Switch Account Type</button>
           <button type="reset" @click.stop="(input = ''), (output = '')">
             Reset
           </button>
