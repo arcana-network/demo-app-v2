@@ -1,0 +1,23 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Content-Security-Policy = '''
+      script-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      frame-src wallet.arcana.network wallet.dev.arcana.network wallet.beta.arcana.network;
+    '''
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "max-age=31536000, immutable"
+[[headers]]
+  for = "/xars/*"
+  [headers.values]
+    Cache-Control = "max-age=31536000, immutable"
