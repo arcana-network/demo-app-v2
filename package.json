@@ -9,7 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@arcana/auth": "^1.0.9-beta.1",
+    "@arcana/auth": "^1.0.11-beta.1",
+    "@solana/web3.js": "^1.91.8",
+    "bs58": "^5.0.0",
+    "buffer": "^6.0.3",
+    "highlight.js": "^11.9.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"

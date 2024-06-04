@@ -1,7 +1,7 @@
-@import './base.css';
+@import "./base.css";
 
 #app {
-  max-width: 1024px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
@@ -28,7 +28,9 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input, select, option {
+input,
+select,
+option {
   color: currentColor;
   border: 1px solid var(--color-text);
   background: transparent;
@@ -68,7 +70,7 @@ textarea {
 }
 
 .tab {
-  border: 1px solid var(--vt-c-divider-dark-2);
+  border: 1px solid var(--color-border);
   color: var(--color-text);
   background: var(--color-background);
   transition: all 0.3s ease-in;
@@ -76,14 +78,13 @@ textarea {
 }
 
 .tab.selected {
-  color: var(--color-background);
-  background: var(--color-text);
+  color: var(--color-dark);
+  background: var(--color-primary);
   box-shadow: none;
 }
 
 .output {
   display: flex;
-  gap: 4px;
 }
 
 .output > * {
@@ -104,9 +105,9 @@ pre {
   overflow-x: hidden;
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   background-color: var(--color-text);
   color: var(--color-background);
   padding: 0.5rem;
@@ -114,10 +115,15 @@ pre {
   flex-grow: 1;
 }
 
+.hljs {
+  background: var(--color-text) !important;
+}
+
 @media (hover: hover) {
   button:hover:not(:disabled) {
-    box-shadow: 2px 4px 2px 1px var(--vt-c-divider-light-1);
-    color: var(--color-text);
+    box-shadow: 2px 4px 2px 1px var(--color-light-2);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
     background: var(--color-background);
   }
 
@@ -125,6 +131,12 @@ pre {
     color: var(--color-background);
     background: var(--color-text);
     box-shadow: none;
+    border-color: var(--color-text);
+  }
+
+  .tab.selected:hover:not(:disabled) {
+    color: var(--color-dark);
+    background: var(--color-primary);
   }
 }
 

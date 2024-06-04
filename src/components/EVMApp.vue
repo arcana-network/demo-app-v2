@@ -1,14 +1,25 @@
 <script setup>
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from "vue";
+import {
+  ref,
+  computed,
+  watch,
+  onBeforeMount,
+  onBeforeUnmount,
+  defineAsyncComponent,
+} from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useLoadingStore } from "@/stores/loading";
-import { chainNames, chainTokens, chainUSDTs } from "@/chains";
+import { chainNames, chainTokens, chainUSDTs } from "@/utils/chains";
+
+const InputOutputModule = defineAsyncComponent(() =>
+  import("@/components/InputOutputModule.vue")
+);
 
 const selectedTab = ref("");
 const auth = useAuthStore();
 const loader = useLoadingStore();
-const output = ref("");
-const input = ref("");
+const output = ref();
+const input = ref();
 const addChainInput = ref({
   chainId: "",
   chainName: "",
@@ -75,7 +86,7 @@ onBeforeMount(async () => {
         method: "_arcana_getAccountType",
       })
       .then((accountType) => {
-        currentAccountType = accountType;
+        currentAccountType.value = accountType;
       });
   }, 1000);
 });
@@ -119,15 +130,15 @@ watch(selectedTab, () => {
 });
 
 const hasInput = computed(() => {
-  return (
-    selectedTab.value === "addChain" ||
-    selectedTab.value === "switchChain" ||
-    selectedTab.value === "addToken" ||
-    selectedTab.value === "signMessage" ||
-    selectedTab.value === "signTypedData" ||
-    selectedTab.value === "sendTransaction" ||
-    selectedTab.value === "switchAccountType"
-  );
+  return [
+    "addChain",
+    "switchChain",
+    "addToken",
+    "signMessage",
+    "signTypedData",
+    "sendTransaction",
+    "switchAccountType",
+  ].includes(selectedTab.value);
 });
 
 async function handleRequestAccounts() {
@@ -136,7 +147,7 @@ async function handleRequestAccounts() {
     output.value = await auth.provider.request({
       method: "eth_requestAccounts",
     });
-  }, 10);
+  });
 }
 
 async function handleGetAccountType() {
@@ -145,7 +156,7 @@ async function handleGetAccountType() {
     output.value = await auth.provider.request({
       method: "_arcana_getAccountType",
     });
-  }, 10);
+  });
 }
 
 async function handleSwitchAccountType() {
@@ -168,12 +179,8 @@ async function handleSwitchAccountType() {
   }
 }
 
-async function handleShowWallet() {
-  await auth.authProvider.showWallet();
-}
-
 async function loadSiweMessage() {
-  messageToSign.value = `localhost wants you to sign in with your Ethereum account:
+  messageToSign.value = `https://demo.arcana.network wants you to sign in with your Ethereum account:
 ${from.value}
 
 This is a test statement.
@@ -556,17 +563,6 @@ function populateToken(token) {
       </button>
       <button
         class="tab"
-        :class="{ selected: selectedTab === 'showWallet' }"
-        @click.stop="
-          selectedTab = 'showWallet';
-          handleShowWallet();
-        "
-        :disabled="!from"
-      >
-        Show Wallet
-      </button>
-      <button
-        class="tab"
         :class="{ selected: selectedTab === 'addChain' }"
         @click.stop="selectedTab = 'addChain'"
         :disabled="!from"
@@ -935,15 +931,6 @@ function populateToken(token) {
         </div>
       </form>
     </div>
-    <div class="output mt-1" v-if="input">
-      <div>
-        <h4 style="font-weight: 600">Request Sent</h4>
-        <pre>{{ input }}</pre>
-      </div>
-      <div>
-        <h4 style="font-weight: 600">Response Received</h4>
-        <pre v-if="output">{{ output }}</pre>
-      </div>
-    </div>
+    <InputOutputModule v-if="input" :input="input" :output="output" />
   </div>
 </template>

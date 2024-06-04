@@ -8,6 +8,13 @@ export const useAuthStore = defineStore("auth", () => {
   const provider = ref(null);
 
   async function loadAuth(appId) {
+    // const ap = new AuthProvider("e06aaea212b141ecaee8682cf842eac31470cef2", {
+    //   network: {
+    //     gatewayUrl: "https://gateway-dev.arcana.network",
+    //     authUrl: "http://localhost:8080",
+    //     walletUrl: "http://localhost:3000",
+    //   },
+    // });
     const ap = new AuthProvider(appId);
     await ap.init();
     authProvider.value = ap;
