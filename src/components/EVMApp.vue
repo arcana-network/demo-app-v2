@@ -96,6 +96,9 @@ onBeforeUnmount(() => {
 });
 
 watch(selectedTab, () => {
+  if (["getAccountType", "requestAccounts"].includes(selectedTab.value)) {
+    return;
+  }
   output.value = "";
   input.value = "";
   addChainInput.value = {
@@ -142,30 +145,36 @@ const hasInput = computed(() => {
 });
 
 async function handleRequestAccounts() {
-  setTimeout(async () => {
-    input.value = { method: "eth_requestAccounts" };
-    output.value = await auth.provider.request({
-      method: "eth_requestAccounts",
-    });
+  input.value = `const accounts = await auth.provider.request({
+  method: "eth_requestAccounts",
+});
+
+console.log(accounts)`;
+  output.value = await auth.provider.request({
+    method: "eth_requestAccounts",
   });
 }
 
 async function handleGetAccountType() {
-  setTimeout(async () => {
-    input.value = { method: "_arcana_getAccountType" };
-    output.value = await auth.provider.request({
-      method: "_arcana_getAccountType",
-    });
+  input.value = `const accountType = await auth.provider.request({
+  method: "_arcana_getAccountType",
+});
+
+console.log(accountType);`;
+  output.value = await auth.provider.request({
+    method: "_arcana_getAccountType",
   });
 }
 
 async function handleSwitchAccountType() {
-  input.value = {
-    method: "_arcana_switchAccountType",
-    params: {
-      type: accountType.value,
-    },
-  };
+  input.value = `const output = await auth.provider.request({
+  method: "_arcana_switchAccountType",
+  params: {
+    type: "${accountType.value}",
+  },
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "_arcana_switchAccountType",
@@ -173,6 +182,7 @@ async function handleSwitchAccountType() {
         type: accountType.value,
       },
     });
+    accountType.value = output.value;
   } catch (error) {
     console.error(error);
     output.value = error;
@@ -236,10 +246,12 @@ async function addChain() {
   if (addChainInput.value.iconUrl) {
     param.iconUrls = [addChainInput.value.iconUrl];
   }
-  input.value = {
-    method: "wallet_addEthereumChain",
-    params: [param],
-  };
+  input.value = `const output = await auth.provider.request({
+  method: "wallet_addEthereumChain",
+  params: [${JSON.stringify(param, null, 4)}],
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "wallet_addEthereumChain",
@@ -252,14 +264,16 @@ async function addChain() {
 }
 
 async function switchChain() {
-  input.value = {
-    method: "wallet_switchEthereumChain",
-    params: [
-      {
-        chainId: addChainInput.value.chainId,
-      },
-    ],
-  };
+  input.value = `const output = await auth.provider.request({
+  method: "wallet_switchEthereumChain",
+  params: [
+    {
+      chainId: "${addChainInput.value.chainId}",
+    },
+  ],
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "wallet_switchEthereumChain",
@@ -280,18 +294,20 @@ watch(input, () => {
 });
 
 async function addToken() {
-  input.value = {
-    method: "wallet_watchAsset",
-    params: {
-      type: "ERC20",
-      options: {
-        address: addTokenInput.value.contract,
-        symbol: addTokenInput.value.symbol,
-        decimals: addTokenInput.value.decimals,
-        image: addTokenInput.value.image,
-      },
+  input.value = `const output = await auth.provider.request({
+  method: "wallet_watchAsset",
+  params: {
+    type: "ERC20",
+    options: {
+      address: "${addTokenInput.value.contract}",
+      symbol: "${addTokenInput.value.symbol}",
+      decimals: ${addTokenInput.value.decimals},
+      image: "${addTokenInput.value.image}",
     },
-  };
+  },
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "wallet_watchAsset",
@@ -312,10 +328,15 @@ async function addToken() {
 }
 
 async function signMessage() {
-  input.value = {
-    method: "personal_sign",
-    params: [messageToSign.value, from.value],
-  };
+  input.value = `const output = await auth.provider.request({
+  method: "personal_sign",
+  params: [
+    "${messageToSign.value}",
+    "${from.value}"
+  ],
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "personal_sign",
@@ -395,18 +416,24 @@ function loadTypedData() {
 }
 
 async function signTypedData() {
-  input.value = {
-    method: "eth_signTypedData_v4",
-    params: [
-      from.value,
+  input.value = `const output = await auth.provider.request({
+  method: "eth_signTypedData_v4",
+  params: [
+    "${from.value}",
+    ${JSON.stringify(
       {
         types: JSON.parse(dataToSign.value.types),
         domain: JSON.parse(dataToSign.value.domain),
         primaryType: dataToSign.value.primaryType,
         message: JSON.parse(dataToSign.value.message),
       },
-    ],
-  };
+      null,
+      4
+    )},
+  ],
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "eth_signTypedData_v4",
@@ -438,10 +465,12 @@ async function sendTransaction() {
   if (sendTxInput.value.data) {
     param.data = sendTxInput.value.data;
   }
-  input.value = {
-    method: "eth_sendTransaction",
-    params: [param],
-  };
+  input.value = `const output = await auth.provider.request({
+  method: "eth_sendTransaction",
+  params: [${JSON.stringify(param, null, 4)}],
+});
+
+console.log(output);`;
   try {
     output.value = await auth.provider.request({
       method: "eth_sendTransaction",

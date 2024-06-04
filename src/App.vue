@@ -153,7 +153,7 @@ async function handleShowWallet() {
         </div>
       </div>
       <div class="mt-1" v-if="appLoaded">
-        <h4 style="font-weight: 600">Javascript Code</h4>
+        <h4 style="font-weight: 600; margin-bottom: 4px">Javascript Code</h4>
         <PreLoginModule :address="appAddress" :theme="themeSelected" />
       </div>
     </section>
