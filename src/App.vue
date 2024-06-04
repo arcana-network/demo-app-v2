@@ -123,7 +123,20 @@ async function handleShowWallet() {
           <div style="display: flex; gap: 1rem; flex-wrap: wrap">
             <button @click.stop="loadPreset('evm')">Load EVM App</button>
             <button @click.stop="loadPreset('solana')">Load Solana App</button>
-            <button @click.stop="loadPreset('near')">Load NEAR App</button>
+            <button
+              @click.stop="loadPreset('mvx')"
+              disabled
+              title="Coming Soon"
+            >
+              Load MultiversX App
+            </button>
+            <button
+              @click.stop="loadPreset('near')"
+              disabled
+              title="Coming Soon"
+            >
+              Load NEAR App
+            </button>
           </div>
         </div>
         <div class="mt-1">
