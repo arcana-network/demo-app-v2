@@ -3,11 +3,15 @@ import { ref, computed, defineAsyncComponent } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { useAuthStore } from "@/stores/auth";
 import { apps } from "@/utils/apps";
+import { getAppConfig } from "@/utils/service";
 
 const EVMApp = defineAsyncComponent(() => import("@/components/EVMApp.vue"));
 const NEARApp = defineAsyncComponent(() => import("@/components/NEARApp.vue"));
 const SolanaApp = defineAsyncComponent(() =>
   import("@/components/SolanaApp.vue")
+);
+const MultiversXApp = defineAsyncComponent(() =>
+  import("@/components/MultiversXApp.vue")
 );
 const PreLoginModule = defineAsyncComponent(() =>
   import("@/components/PreLoginModule.vue")
@@ -44,17 +48,25 @@ const loadPreset = async (preset) => {
   presetLoaded.value = "";
   let address = "";
   let presetName = "";
-  if (preset === "evm") {
-    address = apps.evm;
-    presetName = "EVM Preset App";
-  } else if (preset === "solana") {
-    address = apps.solana;
-    presetName = "Solana Preset App";
-  } else if (preset === "near") {
-    address = apps.near;
-    presetName = "NEAR Preset App";
-  } else {
-    address = apps.solana;
+  switch (preset) {
+    case "evm":
+      address = apps.evm;
+      presetName = "EVM Preset App";
+      break;
+    case "solana":
+      address = apps.solana;
+      presetName = "Solana Preset App";
+      break;
+    case "multiversx":
+      address = apps.multiversx;
+      presetName = "MultiversX Preset App";
+      break;
+    case "near":
+      address = apps.near;
+      presetName = "NEAR Preset App";
+      break;
+    default:
+      break;
   }
   loadingStore.showLoader(`Loading the ${presetName}. Please wait...`);
   try {
@@ -65,7 +77,8 @@ const loadPreset = async (preset) => {
     } else await auth.loadAuth(address);
     appLoaded.value = true;
     presetLoaded.value = `Loaded ${presetName}`;
-    chainType.value = auth.authProvider.appConfig.chainType;
+    const appConfig = await getAppConfig(address);
+    chainType.value = appConfig.chain_type;
   } catch (e) {
     console.error(e);
     alert("Error loading app. Please check the console for more details.");
@@ -108,10 +121,10 @@ async function handleShowWallet() {
     </div>
     <section v-if="isLoggedIn" name="post-login">
       <div class="mt-1">
-        <NEARApp v-if="chainType === 'near_cv25519'" />
-        <div v-else-if="chainType === 'mvx_cv25519'"></div>
-        <SolanaApp v-else-if="chainType === 'solana_cv25519'" />
-        <EVMApp v-else />
+        <NEARApp v-if="chainType === 'near'" />
+        <MultiversXApp v-else-if="chainType === 'multiversx'" />
+        <SolanaApp v-else-if="chainType === 'solana'" />
+        <EVMApp v-else-if="chainType === 'evm'" />
       </div>
     </section>
     <section v-else name="pre-login" style="align-items: center">
@@ -123,19 +136,15 @@ async function handleShowWallet() {
           <div style="display: flex; gap: 1rem; flex-wrap: wrap">
             <button @click.stop="loadPreset('evm')">Load EVM App</button>
             <button @click.stop="loadPreset('solana')">Load Solana App</button>
-            <button
-              @click.stop="loadPreset('mvx')"
-              disabled
-              title="Coming Soon"
-            >
-              Load MultiversX App
+            <button @click.stop="loadPreset('multiversx')">
+              Load MultiversX App (Testnet)
             </button>
             <button
               @click.stop="loadPreset('near')"
               disabled
               title="Coming Soon"
             >
-              Load NEAR App
+              Load NEAR App (Devnet)
             </button>
           </div>
         </div>

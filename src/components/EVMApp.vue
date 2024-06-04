@@ -297,7 +297,7 @@ async function addToken() {
   input.value = `const output = await auth.provider.request({
   method: "wallet_watchAsset",
   params: {
-    type: "ERC20",
+    type: "ERC20", // Can add ERC721, ERC1155 as well
     options: {
       address: "${addTokenInput.value.contract}",
       symbol: "${addTokenInput.value.symbol}",
@@ -328,11 +328,15 @@ console.log(output);`;
 }
 
 async function signMessage() {
-  input.value = `const output = await auth.provider.request({
+  input.value = `const accounts = await auth.provider.request({
+  method: "eth_requestAccounts",
+});
+  
+const output = await auth.provider.request({
   method: "personal_sign",
   params: [
     "${messageToSign.value}",
-    "${from.value}"
+    accounts[0]
   ],
 });
 
@@ -416,10 +420,14 @@ function loadTypedData() {
 }
 
 async function signTypedData() {
-  input.value = `const output = await auth.provider.request({
+  input.value = `const accounts = await auth.provider.request({
+  method: "eth_requestAccounts",
+});
+  
+const output = await auth.provider.request({
   method: "eth_signTypedData_v4",
   params: [
-    "${from.value}",
+    accounts[0],
     ${JSON.stringify(
       {
         types: JSON.parse(dataToSign.value.types),
@@ -465,7 +473,11 @@ async function sendTransaction() {
   if (sendTxInput.value.data) {
     param.data = sendTxInput.value.data;
   }
-  input.value = `const output = await auth.provider.request({
+  input.value = `const accounts = await auth.provider.request({
+  method: "eth_requestAccounts",
+});
+  
+  const output = await auth.provider.request({
   method: "eth_sendTransaction",
   params: [${JSON.stringify(param, null, 4)}],
 });
