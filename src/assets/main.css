@@ -119,6 +119,10 @@ pre {
   background: var(--color-text) !important;
 }
 
+.pink {
+  color: var(--color-primary);
+}
+
 strong {
   font-weight: 600;
 }

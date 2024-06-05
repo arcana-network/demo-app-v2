@@ -183,6 +183,10 @@ console.log(output);`;
       },
     });
     currentAccountType.value = accountType.value;
+    const accounts = await auth.provider.request({
+      method: "eth_requestAccounts",
+    });
+    from.value = accounts[0];
   } catch (error) {
     console.error(error);
     output.value = error;
@@ -579,6 +583,8 @@ function populateToken(token) {
 <template>
   <div>
     <div class="hide" :class="{ show: !!from }" style="font-size: 14px">
+      <span><strong>Network: </strong> EVM</span>
+      <br />
       <span><strong>Account: </strong>{{ from }}</span>
       <br />
       <span
@@ -643,7 +649,12 @@ function populateToken(token) {
         class="tab"
         :class="{ selected: selectedTab === 'signMessage' }"
         @click.stop="selectedTab = 'signMessage'"
-        :disabled="!from"
+        :disabled="!from || currentAccountType === 'scw'"
+        :title="
+          currentAccountType === 'scw'
+            ? 'Cannot sign the message with a SCW, switch to an EOA to sign the message'
+            : ''
+        "
       >
         Sign Message
       </button>
@@ -659,7 +670,12 @@ function populateToken(token) {
         class="tab"
         :class="{ selected: selectedTab === 'signTypedData' }"
         @click.stop="selectedTab = 'signTypedData'"
-        :disabled="!from"
+        :disabled="!from || currentAccountType === 'scw'"
+        :title="
+          currentAccountType === 'scw'
+            ? 'Cannot sign the typed data with a SCW, switch to an EOA to sign the typed data'
+            : ''
+        "
       >
         Sign Typed Data
       </button>

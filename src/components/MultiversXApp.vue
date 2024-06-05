@@ -1,25 +1,21 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  onBeforeMount,
-  onBeforeUnmount,
-  defineAsyncComponent,
-} from "vue";
+import { ref, computed, watch, onBeforeMount, defineAsyncComponent } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { useLoadingStore } from "@/stores/loading";
 
 const InputOutputModule = defineAsyncComponent(() =>
   import("@/components/InputOutputModule.vue")
 );
 
 const auth = useAuthStore();
+const loader = useLoadingStore();
 const selectedTab = ref("");
 const input = ref("");
 const output = ref("");
 const hasInput = computed(() => {
   return ["signMessage"].includes(selectedTab.value);
 });
+const currentAccount = ref("");
 
 const messageToSign = ref("");
 
@@ -41,6 +37,23 @@ watch(selectedTab, () => {
   output.value = "";
   input.value = "";
   messageToSign.value = "";
+});
+
+onBeforeMount(async () => {
+  const addrInterval = setInterval(() => {
+    loader.showLoader("Loading your wallet. Please wait...");
+    auth.provider
+      .request({
+        method: "getAccounts",
+      })
+      .then(async (accounts) => {
+        currentAccount.value = accounts[0];
+        if (currentAccount.value) {
+          clearInterval(addrInterval);
+          loader.hideLoader();
+        }
+      });
+  }, 1000);
 });
 
 async function handleGetAccounts() {
@@ -207,7 +220,16 @@ console.log(signature);`;
 
 <template>
   <div>
-    <div style="display: flex; flex-wrap: wrap">
+    <div
+      class="hide"
+      :class="{ show: !!currentAccount }"
+      style="font-size: 14px"
+    >
+      <span><strong>Network: </strong> MultiversX</span>
+      <br />
+      <span><strong>Account: </strong>{{ currentAccount }}</span>
+    </div>
+    <div class="mt-1" style="display: flex; flex-wrap: wrap">
       <button
         class="tab"
         :class="{ selected: selectedTab === 'getAccounts' }"
@@ -215,6 +237,7 @@ console.log(signature);`;
           selectedTab = 'getAccounts';
           handleGetAccounts();
         "
+        :disabled="!currentAccount"
       >
         Get Accounts
       </button>
@@ -225,6 +248,7 @@ console.log(signature);`;
           selectedTab = 'getPublicKey';
           handleGetPublicKey();
         "
+        :disabled="!currentAccount"
       >
         Get Public Key
       </button>
@@ -232,6 +256,7 @@ console.log(signature);`;
         class="tab"
         :class="{ selected: selectedTab === 'signMessage' }"
         @click.stop="selectedTab = 'signMessage'"
+        :disabled="!currentAccount"
       >
         Sign Message
       </button>
@@ -242,6 +267,7 @@ console.log(signature);`;
           selectedTab = 'signTransaction';
           handleSignTransaction();
         "
+        :disabled="!currentAccount"
       >
         Sign Transaction
       </button>
@@ -252,6 +278,7 @@ console.log(signature);`;
           selectedTab = 'signTransactions';
           handleSignTransactions();
         "
+        :disabled="!currentAccount"
       >
         Sign Transactions
       </button>

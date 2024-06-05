@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineAsyncComponent, watch, computed } from "vue";
+import { ref, defineAsyncComponent, watch, computed, onBeforeMount } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import base58 from "bs58";
 import {
@@ -10,6 +10,7 @@ import {
   VersionedTransaction,
   clusterApiUrl,
 } from "@solana/web3.js";
+import { useLoadingStore } from "@/stores/loading";
 
 const InputOutputModule = defineAsyncComponent(() =>
   import("@/components/InputOutputModule.vue")
@@ -20,6 +21,8 @@ const auth = useAuthStore();
 const output = ref();
 const input = ref();
 const messageToSign = ref("");
+const currentAccount = ref("");
+const loader = useLoadingStore();
 
 const hasInput = computed(() => {
   return ["signMessage"].includes(selectedTab.value);
@@ -44,6 +47,24 @@ watch(selectedTab, () => {
   output.value = "";
   input.value = "";
   messageToSign.value = "";
+});
+
+onBeforeMount(async () => {
+  const addrInterval = setInterval(() => {
+    loader.showLoader("Loading your wallet. Please wait...");
+    auth.provider
+      .request({
+        method: "getAccounts",
+        params: [],
+      })
+      .then(async (accounts) => {
+        currentAccount.value = accounts[0];
+        if (currentAccount.value) {
+          clearInterval(addrInterval);
+          loader.hideLoader();
+        }
+      });
+  }, 1000);
 });
 
 async function handleGetAccounts() {
@@ -408,7 +429,16 @@ async function loadRandomMessage() {
 
 <template>
   <div>
-    <div style="display: flex; flex-wrap: wrap">
+    <div
+      class="hide"
+      :class="{ show: !!currentAccount }"
+      style="font-size: 14px"
+    >
+      <span><strong>Network: </strong> Solana</span>
+      <br />
+      <span><strong>Account: </strong>{{ currentAccount }}</span>
+    </div>
+    <div class="mt-1" style="display: flex; flex-wrap: wrap">
       <button
         class="tab"
         :class="{ selected: selectedTab === 'getAccounts' }"
@@ -416,6 +446,7 @@ async function loadRandomMessage() {
           selectedTab = 'getAccounts';
           handleGetAccounts();
         "
+        :disabled="!currentAccount"
       >
         Get Accounts
       </button>
@@ -426,6 +457,7 @@ async function loadRandomMessage() {
           selectedTab = 'getPublicKey';
           handleGetPublicKey();
         "
+        :disabled="!currentAccount"
       >
         Get Public Key
       </button>
@@ -433,6 +465,7 @@ async function loadRandomMessage() {
         class="tab"
         :class="{ selected: selectedTab === 'signMessage' }"
         @click.stop="selectedTab = 'signMessage'"
+        :disabled="!currentAccount"
       >
         Sign Message
       </button>
@@ -443,6 +476,7 @@ async function loadRandomMessage() {
           selectedTab = 'signTransaction';
           handleSignTransaction();
         "
+        :disabled="!currentAccount"
       >
         Sign Transaction
       </button>
@@ -453,6 +487,7 @@ async function loadRandomMessage() {
           selectedTab = 'signAllTransactions';
           handleSignAllTransactions();
         "
+        :disabled="!currentAccount"
       >
         Sign All Transactions
       </button>
@@ -463,6 +498,7 @@ async function loadRandomMessage() {
           selectedTab = 'signAndSendTransaction';
           handleSignAndSendTransaction();
         "
+        :disabled="!currentAccount"
       >
         Sign And Send Transaction
       </button>
