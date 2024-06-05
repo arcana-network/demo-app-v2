@@ -182,7 +182,7 @@ console.log(output);`;
         type: accountType.value,
       },
     });
-    accountType.value = output.value;
+    currentAccountType.value = output.value;
   } catch (error) {
     console.error(error);
     output.value = error;
