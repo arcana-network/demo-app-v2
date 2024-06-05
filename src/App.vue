@@ -4,6 +4,7 @@ import { useLoadingStore } from "@/stores/loading";
 import { useAuthStore } from "@/stores/auth";
 import { apps } from "@/utils/apps";
 import { getAppConfig } from "@/utils/service";
+import PreLoginModule from "@/components/PreLoginModule.vue";
 
 const EVMApp = defineAsyncComponent(() => import("@/components/EVMApp.vue"));
 const NEARApp = defineAsyncComponent(() => import("@/components/NEARApp.vue"));
@@ -12,9 +13,6 @@ const SolanaApp = defineAsyncComponent(() =>
 );
 const MultiversXApp = defineAsyncComponent(() =>
   import("@/components/MultiversXApp.vue")
-);
-const PreLoginModule = defineAsyncComponent(() =>
-  import("@/components/PreLoginModule.vue")
 );
 
 const appAddress = ref("");
