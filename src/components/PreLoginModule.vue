@@ -16,7 +16,7 @@ const appAddress = "${props.address}";
 
 ${authProviderScript}
 
-// Initialize auth (Just do this once throughout the app lifecycle)
+// Initialize auth
 const init = async () => {
   await auth.init();
 };
