@@ -504,7 +504,7 @@ function loadChain(chain) {
           symbol: "GNO",
           decimals: 18,
         },
-        rpcUrl: "https://gnosis.publicnode.com",
+        rpcUrl: "https://rpc.ankr.com/gnosis",
         blockExplorerUrl: "https://gnosisscan.io",
         iconUrl: "https://icons.llamao.fi/icons/chains/rsz_xdai.jpg",
       };
@@ -517,7 +517,7 @@ function loadChain(chain) {
           symbol: "MNT",
           decimals: 18,
         },
-        rpcUrl: "https://rpc.mantle.xyz",
+        rpcUrl: "https://rpc.ankr.com/mantle",
         blockExplorerUrl: "https://explorer.mantle.xyz",
         iconUrl: "https://icons.llamao.fi/icons/chains/rsz_mantle.jpg",
       };
@@ -530,22 +530,35 @@ function loadChain(chain) {
           symbol: "CELO",
           decimals: 18,
         },
-        rpcUrl: "https://1rpc.io/celo",
+        rpcUrl: "https://rpc.ankr.com/celo",
         blockExplorerUrl: "https://celoscan.io",
         iconUrl: "https://icons.llamao.fi/icons/chains/rsz_celo.jpg",
       };
       break;
-    case "cronos":
+    case "kava":
       addChainInput.value = {
-        chainId: "0x19",
-        chainName: "Cronos Mainnet",
+        chainId: "0x8ae",
+        chainName: "Kava",
         nativeCurrency: {
-          symbol: "CRON",
+          symbol: "KAVA",
           decimals: 18,
         },
-        rpcUrl: "https://cronos-evm.publicnode.com",
-        blockExplorerUrl: "https://cronoscan.com",
-        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_cronos.jpg",
+        rpcUrl: "https://rpc.ankr.com/kava_evm",
+        blockExplorerUrl: "https://kavascan.com/",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_kava.jpg",
+      };
+      break;
+    case "filecoin":
+      addChainInput.value = {
+        chainId: "0x13a",
+        chainName: "Filecoin - Mainnet",
+        nativeCurrency: {
+          symbol: "FIL",
+          decimals: 18,
+        },
+        rpcUrl: "https://rpc.ankr.com/filecoin",
+        blockExplorerUrl: "https://filscan.io",
+        iconUrl: "https://icons.llamao.fi/icons/chains/rsz_filecoin.jpg",
       };
       break;
     default:
@@ -676,9 +689,12 @@ function populateToken(token) {
         <h4>Load Input from presets</h4>
         <div style="display: flex; gap: 1rem; flex-wrap: wrap">
           <button @click.stop="loadChain('celo')">Load Celo Mainnet</button>
-          <button @click.stop="loadChain('cronos')">Load Cronos Mainnet</button>
+          <button @click.stop="loadChain('kava')">Load Kava</button>
           <button @click.stop="loadChain('gnosis')">Load Gnosis</button>
           <button @click.stop="loadChain('mantle')">Load Mantle</button>
+          <button @click.stop="loadChain('filecoin')">
+            Load Filecoin - Mainnet
+          </button>
         </div>
       </div>
       <div v-if="selectedTab === 'switchChain'">
