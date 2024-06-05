@@ -1,6 +1,6 @@
 <script setup>
 import hljs from "highlight.js/lib/core";
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, onUpdated, ref, watch } from "vue";
 
 const props = defineProps(["output", "input"]);
 
@@ -13,6 +13,7 @@ onMounted(() => {
 });
 
 onUpdated(() => {
+  copied.value = false;
   if (inputEl.value) {
     inputEl.value.removeAttribute("data-highlighted");
   }
