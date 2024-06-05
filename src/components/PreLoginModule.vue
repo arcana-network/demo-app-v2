@@ -1,6 +1,6 @@
 <script setup>
 import hljs from "highlight.js/lib/core";
-import { onMounted, onUpdated } from "vue";
+import { computed, onMounted, onUpdated } from "vue";
 
 const props = defineProps(["address", "theme"]);
 
@@ -8,7 +8,8 @@ const authProviderScript = props.theme
   ? `const auth = new AuthProvider("${props.address}", { theme: "${props.theme}" });`
   : `const auth = new AuthProvider("${props.address}");`;
 
-const preLoginScript = `import { AuthProvider } from '@arcana/auth';
+const preLoginScript = computed(
+  () => `import { AuthProvider } from '@arcana/auth';
 
 ${authProviderScript}
 
@@ -63,7 +64,8 @@ const logout = async () => {
 
 // Login with firebase
 // Check the docs here: https://docs.arcana.network/auth/onboard/vanilla/custom-ui/build-idm/firebase-login/
-`;
+`
+);
 
 onMounted(() => {
   hljs.highlightAll();
