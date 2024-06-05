@@ -120,7 +120,7 @@ async function handleShowWallet() {
       {{ loadingStore.message || "Loading..." }}
     </div>
     <section v-if="isLoggedIn" name="post-login">
-      <div class="mt-1">
+      <div>
         <NEARApp v-if="chainType === 'near'" />
         <MultiversXApp v-else-if="chainType === 'multiversx'" />
         <SolanaApp v-else-if="chainType === 'solana'" />
@@ -191,7 +191,7 @@ section {
 main {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   max-width: 1280px;
   margin: 0 auto;
   width: 100%;

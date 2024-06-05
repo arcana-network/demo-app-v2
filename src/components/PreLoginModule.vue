@@ -53,6 +53,16 @@ auth.on("connect", () => {
   console.log("Logged in successfully");
 });
 
+// Show Wallet
+const showWallet = async () => {
+  await auth.showWallet();
+};
+
+// Logout
+const logout = async () => {
+  await auth.logout();
+};
+
 // Login with firebase
 // Check the docs here: https://docs.arcana.network/auth/onboard/vanilla/custom-ui/build-idm/firebase-login/
 `;

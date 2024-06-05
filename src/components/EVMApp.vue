@@ -578,26 +578,26 @@ function populateToken(token) {
 
 <template>
   <div>
-    <div class="hide" :class="{ show: !!from }">
-      <span>Account: {{ from }}</span>
+    <div class="hide" :class="{ show: !!from }" style="font-size: 14px">
+      <span><strong>Account: </strong>{{ from }}</span>
       <br />
       <span
-        >Currently selected chain: {{ walletChain }}
+        ><strong>Chain: </strong>{{ walletChain }}
         <span v-if="chainNames[Number(walletChain)]"
           >({{ chainNames[Number(walletChain)] }})</span
         ></span
       >
       <br />
       <span
-        >Account Type:
+        ><strong>Account Type: </strong>
         <span v-if="currentAccountType === 'scw'"
           >SCW (Smart Contract Wallet). Using this wallet you can perform
           gasless transactions.<br />
-          <span style="font-size: 10px"
-            ><strong style="font-weight: 600; color: #ff4e9f">Note:</strong> If
-            you are using a sample app from the presets then you will be charged
-            gas fees from your SCW since the gas tank for preset apps is empty
-            and is not sponsored by the developers.</span
+          <span style="font-size: 12px"
+            ><strong style="color: #ff4e9f">Note:</strong> If you are using a
+            sample app from the presets then you will be charged gas fees from
+            your SCW since the gas tank for preset apps is empty and is not
+            sponsored by the developers.</span
           ></span
         >
         <span v-else>EOA (Externally Owned Address).</span></span

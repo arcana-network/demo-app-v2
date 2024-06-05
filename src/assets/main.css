@@ -119,6 +119,10 @@ pre {
   background: var(--color-text) !important;
 }
 
+strong {
+  font-weight: 600;
+}
+
 @media (hover: hover) {
   button:hover:not(:disabled) {
     box-shadow: 2px 4px 2px 1px var(--color-light-2);
