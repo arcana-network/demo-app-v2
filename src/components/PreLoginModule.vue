@@ -5,11 +5,13 @@ import { computed, onMounted, onUpdated } from "vue";
 const props = defineProps(["address", "theme"]);
 
 const authProviderScript = props.theme
-  ? `const auth = new AuthProvider("${props.address}", { theme: "${props.theme}" });`
-  : `const auth = new AuthProvider("${props.address}");`;
+  ? `const auth = new AuthProvider(appAddress, { theme });`
+  : `const auth = new AuthProvider(appAddress);`;
 
 const preLoginScript = computed(
   () => `import { AuthProvider } from '@arcana/auth';
+
+const appAddress = "${props.address}";
 
 ${authProviderScript}
 
