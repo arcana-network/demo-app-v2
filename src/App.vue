@@ -78,7 +78,7 @@ const loadPreset = async (preset) => {
     appLoaded.value = true;
     presetLoaded.value = `Loaded ${presetName}`;
     const appConfig = await getAppConfig(address);
-    chainType.value = appConfig.chain_type;
+    chainType.value = appConfig.chain_type?.toLowerCase();
   } catch (e) {
     console.error(e);
     alert("Error loading app. Please check the console for more details.");
