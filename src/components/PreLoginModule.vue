@@ -1,8 +1,9 @@
 <script setup>
 import hljs from "highlight.js/lib/core";
-import { computed, onMounted, onUpdated } from "vue";
+import { computed, onMounted, onUpdated, ref } from "vue";
 
 const props = defineProps(["address", "theme"]);
+const codeEl = ref(null);
 
 const authProviderScript = props.theme
   ? `const auth = new AuthProvider(appAddress, { theme });`
@@ -74,10 +75,13 @@ onMounted(() => {
 });
 
 onUpdated(() => {
+  if (codeEl.value) {
+    codeEl.value.removeAttribute("data-highlighted");
+  }
   hljs.highlightAll();
 });
 </script>
 
 <template>
-  <pre><code class="language-js">{{ preLoginScript }}</code></pre>
+  <pre><code class="language-js" ref="codeEl">{{ preLoginScript }}</code></pre>
 </template>
