@@ -12,8 +12,14 @@ onMounted(() => {
   hljs.highlightAll();
 });
 
+watch(
+  () => props.input,
+  () => {
+    copied.value = false;
+  }
+);
+
 onUpdated(() => {
-  copied.value = false;
   if (inputEl.value) {
     inputEl.value.removeAttribute("data-highlighted");
   }
