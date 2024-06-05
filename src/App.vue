@@ -35,6 +35,8 @@ const loadApp = async () => {
     document.querySelector("iframe.xar-wallet")?.remove();
     await auth.loadAuth(appAddress.value);
     appLoaded.value = true;
+    const appConfig = await getAppConfig(address);
+    chainType.value = appConfig.chain_type?.toLowerCase();
   } catch (e) {
     console.error(e);
     alert("Error loading app. Please check the console for more details.");
@@ -174,9 +176,14 @@ async function handleShowWallet() {
           <button @click.stop="login">Login With Arcana</button>
         </div>
       </div>
-      <div class="mt-1" v-if="appLoaded">
-        <h4 style="font-weight: 600; margin-bottom: 4px">Javascript Code</h4>
-        <PreLoginModule :address="appAddress" :theme="themeSelected" />
+      <div class="xar-output mt-1">
+        <div class="code">
+          <div>
+            <h4>Javascript Code</h4>
+            <hr />
+          </div>
+          <PreLoginModule :address="appAddress" :theme="themeSelected" />
+        </div>
       </div>
     </section>
   </main>

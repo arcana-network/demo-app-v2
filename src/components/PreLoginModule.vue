@@ -1,10 +1,8 @@
 <script setup>
 import hljs from "highlight.js/lib/core";
-import javascript from "highlight.js/lib/languages/javascript";
 import { onMounted, onUpdated } from "vue";
 
 const props = defineProps(["address", "theme"]);
-hljs.registerLanguage("js", javascript);
 
 const authProviderScript = props.theme
   ? `const auth = new AuthProvider("${props.address}", { theme: "${props.theme}" });`
