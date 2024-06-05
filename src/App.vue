@@ -35,7 +35,7 @@ const loadApp = async () => {
     document.querySelector("iframe.xar-wallet")?.remove();
     await auth.loadAuth(appAddress.value);
     appLoaded.value = true;
-    const appConfig = await getAppConfig(address);
+    const appConfig = await getAppConfig(appAddress.value);
     chainType.value = appConfig.chain_type?.toLowerCase();
   } catch (e) {
     console.error(e);
