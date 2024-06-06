@@ -8,6 +8,12 @@
   font-weight: normal;
 }
 
+@media screen and (max-width: 1024px) {
+  #app {
+    padding: 1rem;
+  }
+}
+
 button {
   cursor: pointer;
   color: var(--color-background);
@@ -41,6 +47,12 @@ textarea {
   transition: all 0.15s ease-in;
   border-radius: 20px;
   font-size: 1rem;
+}
+
+button:not(.tab) {
+  padding: 1rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 600;
 }
 
 input:focus,
@@ -97,6 +109,16 @@ textarea {
 .xar-output {
   display: flex;
   gap: 1rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .xar-output {
+    flex-direction: column;
+  }
+}
+
+.xar-output .code {
+  border-radius: 20px;
 }
 
 .xar-output > * {

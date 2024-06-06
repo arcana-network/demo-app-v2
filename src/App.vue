@@ -106,7 +106,13 @@ async function handleShowWallet() {
 <template>
   <main>
     <header
-      style="display: flex; align-items: center; justify-content: space-between"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      "
     >
       <img src="/logo-horizontal.png" style="height: 40px" />
       <div v-if="isLoggedIn">
@@ -150,16 +156,25 @@ async function handleShowWallet() {
           </h3>
           <form
             @submit.prevent="loadApp"
-            style="display: flex; gap: 1rem; align-items: center"
+            style="display: flex; flex-direction: column; gap: 4px"
           >
             <label for="app-address">App Address:</label>
-            <input
-              type="text"
-              id="app-address"
-              style="width: 360px"
-              v-model="appAddress"
-            />
-            <button type="submit">Load App</button>
+            <div
+              style="
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                flex-wrap: wrap;
+              "
+            >
+              <input
+                type="text"
+                id="app-address"
+                style="max-width: 360px; width: 100%"
+                v-model="appAddress"
+              />
+              <button type="submit">Load App</button>
+            </div>
           </form>
         </div>
         <div class="hide mt-1" :class="{ show: appLoaded }">
