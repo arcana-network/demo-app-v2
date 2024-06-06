@@ -30,14 +30,25 @@ button:disabled {
 
 input,
 select,
-option {
+option,
+textarea {
   color: currentColor;
   border: 1px solid var(--color-text);
   background: transparent;
   box-shadow: none;
-  padding: 0.5rem;
-  border-radius: 2px;
-  transition: all 0.3s ease-in;
+  padding: 1rem 1.5rem;
+  outline-color: var(--color-primary);
+  transition: all 0.15s ease-in;
+  border-radius: 20px;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+option:focus {
+  outline-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .hide {
