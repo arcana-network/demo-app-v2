@@ -24,14 +24,7 @@ watch(input, () => {
 });
 
 watch(selectedTab, () => {
-  if (
-    [
-      "getAccounts",
-      "getPublicKey",
-      "signTransaction",
-      "signTransactions",
-    ].includes(selectedTab.value)
-  ) {
+  if (["getAccounts", "signAndSendTransaction"].includes(selectedTab.value)) {
     return;
   }
   output.value = "";
