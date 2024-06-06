@@ -139,12 +139,8 @@ async function handleShowWallet() {
             <button @click.stop="loadPreset('multiversx')">
               Load MultiversX App (Testnet)
             </button>
-            <button
-              @click.stop="loadPreset('near')"
-              disabled
-              title="Coming Soon"
-            >
-              Load NEAR App (Devnet)
+            <button @click.stop="loadPreset('near')">
+              Load NEAR App (Devnet, Experimental)
             </button>
           </div>
         </div>

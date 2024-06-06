@@ -1,36 +1,133 @@
 <script setup>
 import { useAuthStore } from "@/stores/auth";
+import { useLoadingStore } from "@/stores/loading";
 import base58 from "bs58";
-import { ref, watch } from "vue";
+import { ref, watch, defineAsyncComponent, computed, onBeforeMount } from "vue";
+
+const InputOutputModule = defineAsyncComponent(() =>
+  import("@/components/InputOutputModule.vue")
+);
 
 const auth = useAuthStore();
-const output = ref();
-const input = ref();
+const output = ref("");
+const input = ref("");
+const currentAccount = ref("");
+const loader = useLoadingStore();
+const selectedTab = ref("");
+const messageToSign = ref("");
+const hasInput = computed(() => {
+  return ["signMessage"].includes(selectedTab.value);
+});
 
-async function getAccounts() {
+watch(input, () => {
+  output.value = "";
+});
+
+watch(selectedTab, () => {
+  if (
+    [
+      "getAccounts",
+      "getPublicKey",
+      "signTransaction",
+      "signTransactions",
+    ].includes(selectedTab.value)
+  ) {
+    return;
+  }
+  output.value = "";
+  input.value = "";
+  messageToSign.value = "";
+});
+
+onBeforeMount(async () => {
+  const addrInterval = setInterval(() => {
+    loader.showLoader("Loading your wallet. Please wait...");
+    auth.provider
+      .request({
+        method: "getAccounts",
+      })
+      .then(async (accounts) => {
+        currentAccount.value = accounts[0];
+        if (currentAccount.value) {
+          clearInterval(addrInterval);
+          loader.hideLoader();
+        }
+      });
+  }, 1000);
+});
+
+async function handleGetAccounts() {
+  input.value = `const accounts = await auth.provider.request({
+  method: "getAccounts",
+});
+
+console.log(accounts);`;
   const request = {
     method: "getAccounts",
   };
-  input.value = request;
   const accounts = await auth.provider.request(request);
   output.value = accounts;
 }
 
-async function signMessage() {
-  const message = base58.encode(Buffer.from("Hello, World!"));
+async function handleSignMessage() {
+  input.value = `import base58 from "bs58";
+  
+const message = base58.encode(Buffer.from("${messageToSign.value}");
+
+const signedMessage = await auth.provider.request({
+  method: "near_signMessage",
+  params: { message },
+});
+
+console.log(signedMessage);`;
+  const message = base58.encode(Buffer.from(messageToSign.value));
   const request = {
     method: "near_signMessage",
     params: { message },
   };
-  input.value = request;
-  const signedMessage = await auth.provider.request(request);
-  output.value = signedMessage;
+  try {
+    const signedMessage = await auth.provider.request(request);
+    output.value = signedMessage;
+  } catch (e) {
+    console.error(e);
+    output.value = e.message;
+  }
 }
 
-async function signAndSendTransaction() {
+async function handleSignAndSendTransaction() {
+  input.value = `const accounts = await auth.provider.request({
+  method: "getAccounts",
+});
+
+const transaction = {
+  receiverId: accounts[0],
+  actions: [
+    {
+      transfer: {
+        deposit: BigInt(1000),
+      },
+    },
+    {
+      transfer: {
+        deposit: BigInt(1000),
+      },
+    },
+    {
+      transfer: {
+        deposit: BigInt(1000),
+      },
+    },
+  ],
+}
+
+const signedTransaction = await auth.provider.request({
+  method: "near_signAndSendTransaction",
+  params: { transaction },
+});
+
+console.log(signedTransaction);`;
   const transaction = {
-    receiverId:
-      "54eaa199c250f7e95e91ad2e37c564da7326436f949966107a98884f5fd51c95",
+    receiverId: currentAccount.value,
     actions: [
       {
         transfer: {
@@ -53,53 +150,78 @@ async function signAndSendTransaction() {
     method: "near_signAndSendTransaction",
     params: { transaction },
   };
-  const displayableTransferActions = transaction.actions.map((action) => {
-    if (action.transfer) {
-      return {
-        transfer: {
-          deposit: action.transfer.deposit.toString(),
-        },
-      };
-    }
-    return action;
-  });
-  const displayableRequest = {
-    method: request.method,
-    params: {
-      transaction: {
-        receiverId: transaction.receiverId,
-        actions: displayableTransferActions,
-      },
-    },
-  };
-  input.value = displayableRequest;
-  const signedTransaction = await auth.provider.request(request);
-  output.value = signedTransaction;
+  try {
+    const signedTransaction = await auth.provider.request(request);
+    output.value = signedTransaction;
+  } catch (e) {
+    console.error(e);
+    output.value = e.message;
+  }
 }
-
-watch(input, () => {
-  output.value = "";
-});
 </script>
 
 <template>
   <div>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-      <button @click.stop="getAccounts">Get Accounts</button>
-      <button @click.stop="signMessage">Sign Message</button>
-      <button @click.stop="signAndSendTransaction">
+    <div
+      class="hide"
+      :class="{ show: !!currentAccount }"
+      style="font-size: 14px"
+    >
+      <span><strong>Network: </strong> Near (Devnet/Experimental)</span>
+      <br />
+      <span><strong>Account: </strong>{{ currentAccount }}</span>
+    </div>
+    <div div class="mt-1" style="display: flex; flex-wrap: wrap">
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'getAccounts' }"
+        @click.stop="
+          selectedTab = 'getAccounts';
+          handleGetAccounts();
+        "
+        :disabled="!currentAccount"
+      >
+        Get Accounts
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'signMessage' }"
+        @click.stop="selectedTab = 'signMessage'"
+        :disabled="!currentAccount"
+      >
+        Sign Message
+      </button>
+      <button
+        class="tab"
+        :class="{ selected: selectedTab === 'signAndSendTransaction' }"
+        @click.stop="
+          selectedTab = 'signAndSendTransaction';
+          handleSignAndSendTransaction();
+        "
+        :disabled="!currentAccount"
+      >
         Sign And Send Transaction
       </button>
     </div>
-    <div class="output mt-1" v-if="input">
-      <div>
-        <h4 style="font-weight: 600">Request Sent</h4>
-        <pre>{{ input }}</pre>
-      </div>
-      <div>
-        <h4 style="font-weight: 600">Response Received</h4>
-        <pre v-if="output">{{ output }}</pre>
-      </div>
+    <div class="input mt-1" v-if="hasInput">
+      <form
+        v-if="selectedTab === 'signMessage'"
+        class="mt-1"
+        style="display: flex; flex-direction: column; gap: 1rem"
+        @submit.prevent="handleSignMessage"
+      >
+        <div class="form-group">
+          <label for="message">Enter message to sign</label>
+          <textarea id="message" v-model="messageToSign" rows="10"></textarea>
+        </div>
+        <div style="display: flex; gap: 1rem">
+          <button>Sign Message</button>
+          <button type="reset" @click.stop="(input = ''), (output = '')">
+            Reset
+          </button>
+        </div>
+      </form>
     </div>
+    <InputOutputModule v-if="input" :input="input" :output="output" />
   </div>
 </template>

@@ -126,11 +126,16 @@ console.log(signature)`;
       version: 1,
     },
   };
-  const signature = await auth.provider.request({
-    method: "mvx_signTransaction",
-    params,
-  });
-  output.value = signature;
+  try {
+    const signature = await auth.provider.request({
+      method: "mvx_signTransaction",
+      params,
+    });
+    output.value = signature;
+  } catch (e) {
+    console.error(e);
+    output.value = e;
+  }
 }
 
 async function handleSignTransactions() {
@@ -192,11 +197,16 @@ console.log(signatures)`;
       },
     ],
   };
-  const signatures = await auth.provider.request({
-    method: "mvx_signTransactions",
-    params,
-  });
-  output.value = signatures;
+  try {
+    const signatures = await auth.provider.request({
+      method: "mvx_signTransactions",
+      params,
+    });
+    output.value = signatures;
+  } catch (e) {
+    console.error(e);
+    output.value = e;
+  }
 }
 
 async function handleSignMessage() {
@@ -213,8 +223,13 @@ async function handleSignMessage() {
 const signature = await auth.provider.request(request);
 
 console.log(signature);`;
-  const signature = await auth.provider.request(request);
-  output.value = signature;
+  try {
+    const signature = await auth.provider.request(request);
+    output.value = signature;
+  } catch (e) {
+    console.error(e);
+    output.value = e;
+  }
 }
 </script>
 
@@ -225,7 +240,7 @@ console.log(signature);`;
       :class="{ show: !!currentAccount }"
       style="font-size: 14px"
     >
-      <span><strong>Network: </strong> MultiversX</span>
+      <span><strong>Network: </strong> MultiversX (Testnet)</span>
       <br />
       <span><strong>Account: </strong>{{ currentAccount }}</span>
     </div>
