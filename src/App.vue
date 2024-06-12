@@ -143,10 +143,10 @@ async function handleShowWallet() {
             <button @click.stop="loadPreset('evm')">Load EVM App</button>
             <button @click.stop="loadPreset('solana')">Load Solana App</button>
             <button @click.stop="loadPreset('multiversx')">
-              Load MultiversX App (Testnet)
+              Load MultiversX App
             </button>
             <button @click.stop="loadPreset('near')">
-              Load NEAR App (Devnet, Experimental)
+              Load NEAR App (Testnet)
             </button>
           </div>
         </div>
