@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineAsyncComponent } from "vue";
+import { ref, computed, defineAsyncComponent, watch } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { useAuthStore } from "@/stores/auth";
 import { apps } from "@/utils/apps";
@@ -23,6 +23,7 @@ const presetLoaded = ref("");
 const appLoaded = ref(false);
 const chainType = ref("");
 const themeSelected = ref("");
+const isPresetClicked = ref(false);
 
 const loadApp = async () => {
   presetLoaded.value = "";
@@ -44,6 +45,7 @@ const loadApp = async () => {
 };
 
 const loadPreset = async (preset) => {
+  isPresetClicked.value = true;
   appLoaded.value = false;
   presetLoaded.value = "";
   let address = "";
@@ -79,6 +81,7 @@ const loadPreset = async (preset) => {
     presetLoaded.value = `Loaded ${presetName}`;
     const appConfig = await getAppConfig(address);
     chainType.value = appConfig.chain_type?.toLowerCase();
+    isPresetClicked.value = true;
   } catch (e) {
     console.error(e);
     alert("Error loading app. Please check the console for more details.");
@@ -101,6 +104,10 @@ const logout = async () => {
 async function handleShowWallet() {
   await auth.authProvider.showWallet();
 }
+
+watch(appAddress, () => {
+  isPresetClicked.value = false;
+});
 </script>
 
 <template>
@@ -173,7 +180,9 @@ async function handleShowWallet() {
                 style="max-width: 360px; width: 100%"
                 v-model="appAddress"
               />
-              <button type="submit">Load App</button>
+              <button type="submit" :disabled="isPresetClicked">
+                Load App
+              </button>
             </div>
           </form>
         </div>

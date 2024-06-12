@@ -160,7 +160,7 @@ console.log(signedTransaction);`;
       :class="{ show: !!currentAccount }"
       style="font-size: 14px"
     >
-      <span><strong>Network: </strong> Near (Devnet/Experimental)</span>
+      <span><strong>Network: </strong> Near (Testnet)</span>
       <br />
       <span><strong>Account: </strong>{{ currentAccount }}</span>
     </div>

@@ -240,7 +240,7 @@ console.log(signature);`;
       :class="{ show: !!currentAccount }"
       style="font-size: 14px"
     >
-      <span><strong>Network: </strong> MultiversX (Testnet)</span>
+      <span><strong>Network: </strong> MultiversX</span>
       <br />
       <span><strong>Account: </strong>{{ currentAccount }}</span>
     </div>
