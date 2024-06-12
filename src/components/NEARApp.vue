@@ -97,17 +97,17 @@ const transaction = {
   actions: [
     {
       transfer: {
-        deposit: BigInt(1000),
+        deposit: BigInt(1000000000000000000),
       },
     },
     {
       transfer: {
-        deposit: BigInt(1000),
+        deposit: BigInt(1000000000000000000),
       },
     },
     {
       transfer: {
-        deposit: BigInt(1000),
+        deposit: BigInt(1000000000000000000),
       },
     },
   ],
@@ -124,17 +124,17 @@ console.log(signedTransaction);`;
     actions: [
       {
         transfer: {
-          deposit: BigInt(1000),
+          deposit: BigInt(1000000000000000000),
         },
       },
       {
         transfer: {
-          deposit: BigInt(1000),
+          deposit: BigInt(1000000000000000000),
         },
       },
       {
         transfer: {
-          deposit: BigInt(1000),
+          deposit: BigInt(1000000000000000000),
         },
       },
     ],
