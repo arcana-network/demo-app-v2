@@ -1,8 +1,17 @@
 /* color palette from <https://github.com/vuejs/theme> */
+/* @import url(""); */
+@font-face {
+  font-family: "Nohemi";
+  src: url("/Nohemi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: block;
+  font-style: normal;
+}
 :root {
   --color-light: #f7f7f7;
   --color-dark: #1d2a31;
   --color-primary: #ff4e9f;
+  --color-primary-2: rgb(255 78 159 / 0.1);
   --color-light-2: #ececec;
 }
 

@@ -14,7 +14,22 @@
   }
 }
 
+section > div {
+  width: 100%;
+}
+
+#login-btns-container {
+  display: flex;
+  justify-content: center;
+  /* border: 1px solid currentColor; */
+  border-radius: 10px;
+  padding: 3rem 0;
+  background-color: var(--color-primary-2);
+}
+
 button {
+  font-size: 0.75rem;
+  text-transform: uppercase;
   cursor: pointer;
   color: var(--color-background);
   border: 1px solid var(--color-text);
@@ -42,16 +57,16 @@ textarea {
   border: 1px solid var(--color-text);
   background: transparent;
   box-shadow: none;
-  padding: 1rem 1.5rem;
+  padding: calc(0.75rem + 1px) 1rem;
   outline-color: var(--color-primary);
   transition: all 0.15s ease-in;
-  border-radius: 20px;
+  border-radius: 10px;
   font-size: 1rem;
 }
 
 button:not(.tab) {
-  padding: 1rem 1.5rem;
-  border-radius: 20px;
+  padding: 1rem 2rem;
+  border-radius: 10px;
   font-weight: 600;
 }
 
@@ -118,7 +133,7 @@ textarea {
 }
 
 .xar-output .code {
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 .xar-output > * {
@@ -149,7 +164,7 @@ pre {
   word-wrap: break-word;
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 16px;
   background-color: var(--color-text);
   color: var(--color-background);
   overflow-wrap: anywhere;
@@ -184,7 +199,7 @@ strong {
     box-shadow: 2px 4px 2px 1px var(--color-light-2);
     color: var(--color-primary);
     border-color: var(--color-primary);
-    background: var(--color-background);
+    background: transparent;
   }
 
   .tab:hover:not(:disabled) {
@@ -227,4 +242,12 @@ button:focus-visible:not(:disabled) {
   #app {
     display: grid;
   }
+}
+
+#heeead {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  font-family: "Nohemi";
 }

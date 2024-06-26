@@ -112,15 +112,13 @@ watch(appAddress, () => {
 
 <template>
   <main>
-    <header
-      style="
+    <header style="
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 1rem;
-      "
-    >
+      ">
       <img src="/logo-horizontal.png" style="height: 40px" />
       <div v-if="isLoggedIn">
         <div style="display: flex; align-items: center; gap: 1rem">
@@ -141,57 +139,53 @@ watch(appAddress, () => {
       </div>
     </section>
     <section v-else name="pre-login" style="align-items: center">
-      <div>
+      <div id="login-btns-container">
         <div>
-          <h3 style="font-weight: 600; margin-bottom: 0.5rem">
-            Load apps from the presets
-          </h3>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-            <button @click.stop="loadPreset('evm')">Load EVM App</button>
-            <button @click.stop="loadPreset('solana')">Load Solana App</button>
-            <button @click.stop="loadPreset('multiversx')">
-              Load MultiversX App
-            </button>
-            <button @click.stop="loadPreset('near')">
-              Load NEAR App (Testnet)
-            </button>
+          <div id="heeead">
+            <h2>Arcana Auth Demo</h2>
+            <!-- <hr> -->
           </div>
-        </div>
-        <div class="mt-1">
-          <h3 style="font-weight: 600; margin-bottom: 0.5rem">
-            Or load your own app
-          </h3>
-          <form
-            @submit.prevent="loadApp"
-            style="display: flex; flex-direction: column; gap: 4px"
-          >
-            <label for="app-address">App Address:</label>
-            <div
-              style="
+          <div>
+            <!-- <h3 style="font-weight: 600; margin-bottom: 0.5rem">
+              Load apps from the presets
+            </h3> -->
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+              <button @click.stop="loadPreset('evm')">Load EVM App</button>
+              <button @click.stop="loadPreset('solana')">Load Solana App</button>
+              <button @click.stop="loadPreset('multiversx')">
+                Load MultiversX App
+              </button>
+              <button @click.stop="loadPreset('near')">
+                Load NEAR App (Testnet)
+              </button>
+            </div>
+          </div>
+          <div class="mt-1">
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem">
+              Load your own app
+            </h3>
+            <form @submit.prevent="loadApp" style="display: flex; flex-direction: column; gap: 4px">
+              <div style="
                 display: flex;
                 gap: 1rem;
                 align-items: center;
                 flex-wrap: wrap;
-              "
-            >
-              <input
-                type="text"
-                id="app-address"
-                style="max-width: 360px; width: 100%"
-                v-model="appAddress"
-              />
-              <button type="submit" :disabled="isPresetClicked">
-                Load App
-              </button>
-            </div>
-          </form>
-        </div>
-        <div class="hide mt-1" :class="{ show: appLoaded }">
-          <span v-if="presetLoaded">{{ presetLoaded }}</span>
-          <span v-else>App {{ appAddress }} loaded</span>
-        </div>
-        <div class="hide mt-1" :class="{ show: appLoaded }">
-          <button @click.stop="login">Login With Arcana</button>
+              ">
+                <input type="text" placeholder="Enter Client ID" id="app-address" style="max-width: 360px; width: 100%"
+                  v-model="appAddress" />
+                <button type="submit" :disabled="isPresetClicked">
+                  Load App
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="hide mt-1" :class="{ show: appLoaded }">
+            <span v-if="presetLoaded">{{ presetLoaded }}</span>
+            <span v-else>App {{ appAddress }} loaded</span>
+          </div>
+          <div class="hide mt-1" :class="{ show: appLoaded }">
+            <button @click.stop="login">Login With Arcana</button>
+          </div>
         </div>
       </div>
       <div class="xar-output mt-1">
@@ -230,9 +224,11 @@ main {
   0% {
     color: var(--vt-c-indigo);
   }
+
   30% {
     color: transparent;
   }
+
   60% {
     color: var(--vt-c-indigo);
   }
