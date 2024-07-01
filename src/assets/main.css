@@ -14,7 +14,7 @@
   }
 }
 
-button {
+button:not(.xar-btn, .xar-action__link) {
   cursor: pointer;
   color: var(--color-background);
   border: 1px solid var(--color-text);
@@ -180,7 +180,7 @@ strong {
 }
 
 @media (hover: hover) {
-  button:hover:not(:disabled, .xar-action__link) {
+  button:hover:not(:disabled, .xar-action__link, .xar-btn) {
     box-shadow: 2px 4px 2px 1px var(--color-light-2);
     color: var(--color-primary);
     border-color: var(--color-primary);
