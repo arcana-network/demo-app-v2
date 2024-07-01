@@ -34,7 +34,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input,
+input:not(.xar-otp-input),
 select,
 option,
 textarea {
