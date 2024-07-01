@@ -34,7 +34,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input:not(.xar-otp-input),
+input:not(.xar-otp-input, .xar-email-login__input),
 select,
 option,
 textarea {
@@ -49,13 +49,13 @@ textarea {
   font-size: 1rem;
 }
 
-button:not(.tab) {
+button:not(.tab, .xar-action__link) {
   padding: 1rem 1.5rem;
   border-radius: 20px;
   font-weight: 600;
 }
 
-input:focus,
+input:focus:not(.xar-otp-input, .xar-email-login__input),
 select:focus,
 textarea:focus,
 option:focus {
@@ -180,7 +180,7 @@ strong {
 }
 
 @media (hover: hover) {
-  button:hover:not(:disabled) {
+  button:hover:not(:disabled, .xar-action__link) {
     box-shadow: 2px 4px 2px 1px var(--color-light-2);
     color: var(--color-primary);
     border-color: var(--color-primary);
