@@ -165,7 +165,7 @@ watch(appAddress, () => {
             @submit.prevent="loadApp"
             style="display: flex; flex-direction: column; gap: 4px"
           >
-            <label for="app-address">App Address:</label>
+            <label for="app-address">Client ID:</label>
             <div
               style="
                 display: flex;
